@@ -49,7 +49,7 @@ We see that the last expression is equivalent to PCA: finding the vector that ma
 
 ### High-Dimensional MLE Asymptotics
 
-Let's now consider PCA in the high-dimensional case. Suppose that the estimand $v_\*$ has dimension $p$ that is allowed to scale with $n$ in some prescribed way. Let's subscript everything with a dummy index $\ell = 1, 2 \ldots $: we have $\\{p_1, p_2 \ldots\\}$, $\\{n_1, n_2 \ldots\\}$, even $\\{\mu_1, \mu_2 \ldots\\}$, and the estimand $\\{{v_\*}\_1, {v_\*}\_2 \ldots\\}$. As $\ell \rightarrow \infty$, for each indexed problem, we can use the principal component of $X_\ell^\top X_\ell$ to estimate ${v_\*}_\ell$.
+Let's now consider PCA in the high-dimensional case. Suppose that the estimand $v_\*$ has dimension $p$ that is allowed to scale with $n$ in some prescribed way. Let's subscript everything with a dummy index $\ell = 1, 2 \ldots $: we have $\\{p_1, p_2 \ldots\\}$, $\\{n_1, n_2 \ldots\\}$, even $\\{\mu_1, \mu_2 \ldots\\}$, and the estimand $\\{v_{\*1}, v_{\*, 2} \ldots\\}$. As $\ell \rightarrow \infty$, for each indexed problem, we can use the principal component of $X_\ell^\top X_\ell$ to estimate $v_{\*\ell}$.
 
 If we do that, how should we evaluate the estimator we obtain? For example, we can consider
 $$
