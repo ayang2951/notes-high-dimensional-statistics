@@ -49,7 +49,7 @@ We see that the last expression is equivalent to PCA: finding the vector that ma
 
 ### High-Dimensional MLE Asymptotics
 
-Let's now consider PCA in the high-dimensional case. Suppose that the estimand $v_\*$ has dimension $p$ that is allowed to scale with $n$ in some prescribed way. Let's subscript everything with a dummy index $\ell = 1, 2 \ldots $: we have $\{p_1, p_2 \ldots\}$, $\{n_1, n_2 \ldots\}$, even $\{\mu_1, \mu_2 \ldots\}$, and the estimand $\{{v_\*}\_1, {v_\*}\_2 \ldots\}$. As $\ell \rightarrow \infty$, for each indexed problem, we can use the principal component of $X_\ell^\top X_\ell$ to estimate ${v_\*}_\ell$.
+Let's now consider PCA in the high-dimensional case. Suppose that the estimand $v_\*$ has dimension $p$ that is allowed to scale with $n$ in some prescribed way. Let's subscript everything with a dummy index $\ell = 1, 2 \ldots $: we have $\\{p_1, p_2 \ldots\\}$, $\\{n_1, n_2 \ldots\\}$, even $\\{\mu_1, \mu_2 \ldots\\}$, and the estimand $\\{{v_\*}\_1, {v_\*}\_2 \ldots\\}$. As $\ell \rightarrow \infty$, for each indexed problem, we can use the principal component of $X_\ell^\top X_\ell$ to estimate ${v_\*}_\ell$.
 
 If we do that, how should we evaluate the estimator we obtain? For example, we can consider
 $$
@@ -173,14 +173,14 @@ The quantity $\frac{v^\top A v}{v^\top v}$ is called the <i><strong>Rayleigh quo
 
 <div class="callout definition"><span class="label">Definition: Principal Submatrix</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-Let $A \in \mathbb R^{ \times n}$ be a symmetric matrix, and let $\mathcal I \subseteq \{1, 2 \ldots n\}$ be a subset of indices. Then
+Let $A \in \mathbb R^{ \times n}$ be a symmetric matrix, and let $\mathcal I \subseteq \\{1, 2 \ldots n\\}$ be a subset of indices. Then
 $A[I] \triangleq (a_{ij})_{i, j \in \mathcal I}$
 is called a <i><strong>principal submatrix</strong></i> of $A$.
 </div>
 
 <div class="callout theorem"><span class="label">Theorem: Cauchy's Interlacing Theorem</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-Let $A \in \mathbb R^{n \times n}$ be a symmetric matrix with eigenvalues $\lambda_1(A) \geq \lambda_2(A) \ldots \geq \lambda_n(A)$. Let $B \in \mathbb R^{m \times m}$ be a principal submatrix of $A$. Then, for all $j \in \{1, 2 \ldots m\}$, we have that
+Let $A \in \mathbb R^{n \times n}$ be a symmetric matrix with eigenvalues $\lambda_1(A) \geq \lambda_2(A) \ldots \geq \lambda_n(A)$. Let $B \in \mathbb R^{m \times m}$ be a principal submatrix of $A$. Then, for all $j \in \\{1, 2 \ldots m\\}$, we have that
 $$
 \lambda_j(A) \geq \lambda_j(B) \geq \lambda_{j + n - m}(A).
 $$
@@ -211,7 +211,7 @@ The proof of Cauchy's interlacing theorem requires the <i><strong>Courant-Fische
 <hr style="height:0.01px; visibility:hidden;" />
 Let $M \in \mathbb R^{m \times m}$ be a symmetric matrix, and let $\theta_1 \geq \theta_2 \ldots \geq \theta_m$ be its eigenvalues. Then, for $j \in [m]$, where $S_k^m$ is a subspace of $\mathbb R^m$ with dimension $k$, we have that
 $$
-\theta_j = \max_{S^m_j} \min_{x \in S_j^m\backslash\{0\}} R_M(x) = \min_{S^m_{m - j + 1}} \max_{x \in S^m_{m - j + 1}\backslash\{0\}} R_M(x),
+\theta_j = \max_{S^m_j} \min_{x \in S_j^m\backslash\\{0\\}} R_M(x) = \min_{S^m_{m - j + 1}} \max_{x \in S^m_{m - j + 1}\backslash\\{0\\}} R_M(x),
 $$
 where $R_M(x)$ is the Rayleigh quotient of $M$ and $x$.
 </div>
@@ -234,7 +234,7 @@ Let us denote by $\tilde \lambda_1, \tilde \lambda_2 \ldots \tilde \lambda_{p - 
 $$
 \hat \lambda_1 \geq \tilde \lambda_1 \geq \hat\lambda_2 \geq \ldots \tilde \lambda_{p - 1} \geq \hat\lambda_p\dots
 $$
-As $\{\tilde \lambda\}$ should be nearly 1, we should have also that $\hat\lambda_2 \ldots \hat\lambda_{p - 1}$ are close to 1 with high probability, i.e. for any $\epsilon > 0$, with probability converging to 1, $\hat\lambda_2 \hat\lambda_3 \ldots \hat\lambda_{p - 1} \in (1 - \epsilon, 1 + \epsilon)$.
+As $\\{\tilde \lambda\\}$ should be nearly 1, we should have also that $\hat\lambda_2 \ldots \hat\lambda_{p - 1}$ are close to 1 with high probability, i.e. for any $\epsilon > 0$, with probability converging to 1, $\hat\lambda_2 \hat\lambda_3 \ldots \hat\lambda_{p - 1} \in (1 - \epsilon, 1 + \epsilon)$.
 
 Knowing what happens for the $p - 2$ eigenvalues, we now need to think about the last two extremes. Solving $\text{det}(\lambda \mathbf I_p - X^\top X)$ seems a bit difficult, so let's break it down into smaller pieces using Schur's formula above. We have
 $$
