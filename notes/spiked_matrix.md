@@ -8,15 +8,15 @@ We'll spend a lot of time here, on the single-component spiked matrix model. We'
 
 Suppose we have
 $$
-X = \mu u v_*^\top + Z,
+X = \mu u v_\*^\top + Z,
 $$
-where $X \in \mathbb R^{n \times p}$, and $Z \in \mathbb R^{n \times p}$ is the noise matrix, $Z_{ij} \overset{iid}\sim \mathcal N \left(0, \frac{1}{n}\right)$, and the signal-to-noise ratio is $\mu \in \mathbb R$. Suppose that we have a deterministic norm-1 vector $v_* \in \mathbb R^{p}$, and a random vector $u \in \mathbb R^{n}$ where $u_i \overset{iid}\sim \mathcal N\left(0, \frac{1}{n}\right)$. 
+where $X \in \mathbb R^{n \times p}$, and $Z \in \mathbb R^{n \times p}$ is the noise matrix, $Z_{ij} \overset{iid}\sim \mathcal N \left(0, \frac{1}{n}\right)$, and the signal-to-noise ratio is $\mu \in \mathbb R$. Suppose that we have a deterministic norm-1 vector $v_\* \in \mathbb R^{p}$, and a random vector $u \in \mathbb R^{n}$ where $u_i \overset{iid}\sim \mathcal N\left(0, \frac{1}{n}\right)$. 
 
-Our aim ist to estimate the direction of $v_*$, which is norm-1. This boils down to principal component analysis: finding the "important direction" of the data.
+Our aim ist to estimate the direction of $v_\*$, which is norm-1. This boils down to principal component analysis: finding the "important direction" of the data.
 
 ### Computing the Maximum Likelihood Estimate
 
-Let's now think about this problem in the high-dimensional regime: where $p$, the dimension of $v_*$, grows with $n$. In classical asymptotics, we know that the MLE is the best estimator, and that it is consistent, i.e. $\hat v_{MLE} \overset{p}\rightarrow v_*$. We also know that, by the asymptotics of the MLE, that $\sqrt{n} (\hat v_{MLE} - v_*) \overset{d}\rightarrow \mathcal N \left(0, I^{-1}(v_*)\right)$.
+Let's now think about this problem in the high-dimensional regime: where $p$, the dimension of $v_\*$, grows with $n$. In classical asymptotics, we know that the MLE is the best estimator, and that it is consistent, i.e. $\hat v_{MLE} \overset{p}\rightarrow v_\*$. We also know that, by the asymptotics of the MLE, that $\sqrt{n} (\hat v_{MLE} - v_\*) \overset{d}\rightarrow \mathcal N \left(0, I^{-1}(v_\*)\right)$.
 
 Let's compute the MLE for this problem and do an asymptotic analysis. 
 
@@ -29,19 +29,19 @@ X = \begin{bmatrix}
 \ X_n^\top \ 
 \end{bmatrix}
 = \begin{bmatrix}
-\ \mu u_1 v_*^\top + Z_1^\top \ \\\\
-\ \mu u_2 v_*^\top + Z_2^\top \ \\\\
+\ \mu u_1 v_\*^\top + Z_1^\top \ \\\\
+\ \mu u_2 v_\*^\top + Z_2^\top \ \\\\
 \ \vdots \ \\\\
-\ \mu u_n v_*^\top + Z_n^\top \ 
+\ \mu u_n v_\*^\top + Z_n^\top \ 
 \end{bmatrix}
 $$
-that they are independent, as $u$ and $Z$ have independent components. The distribution of each row is $X_i \sim \mathcal N\left(0, \frac{\mu^2}{n} v_* v_*^\top + \frac{1}{n} \mathbf I_p\right)$. Hence, we have that the distribution of $X$ is
+that they are independent, as $u$ and $Z$ have independent components. The distribution of each row is $X_i \sim \mathcal N\left(0, \frac{\mu^2}{n} v_\* v_\*^\top + \frac{1}{n} \mathbf I_p\right)$. Hence, we have that the distribution of $X$ is
 $$
-\mathbb P_{v_*}(X) = \prod_{i = 1}^n \mathbb P_{v_*}(X_i) = \text{det} \left(\frac{\mu^2}{n} v_* v_*^\top + \frac{1}{n} \mathbf I_p\right)^{-\frac{1}{2}} \exp \left\\{-\frac{n}{2} X_i^\top (\mu^2 v_* v_*^\top + \mathbf I_p)^{-1} X_i\right\\}.
+\mathbb P_{v_\*}(X) = \prod_{i = 1}^n \mathbb P_{v_\*}(X_i) = \text{det} \left(\frac{\mu^2}{n} v_\* v_\*^\top + \frac{1}{n} \mathbf I_p\right)^{-\frac{1}{2}} \exp \left\\{-\frac{n}{2} X_i^\top (\mu^2 v_\* v_\*^\top + \mathbf I_p)^{-1} X_i\right\\}.
 $$
-Note that, for the "rank-one updated" matrix $\mu^2 v_* v_*^\top + \mathbf I_p$, the eigenvalues are 1, which has multiplicity $p - 1$, and $\mu^2 + 1$. The eigenvector for $\mu^2 + 1$ has associated eigenvector $v$, and the rest are the $p - 1$ orthogonal directions. Returning to our maximum likelihood calculation, we have
+Note that, for the "rank-one updated" matrix $\mu^2 v_\* v_\*^\top + \mathbf I_p$, the eigenvalues are 1, which has multiplicity $p - 1$, and $\mu^2 + 1$. The eigenvector for $\mu^2 + 1$ has associated eigenvector $v$, and the rest are the $p - 1$ orthogonal directions. Returning to our maximum likelihood calculation, we have
 $$
-\hat v_{MLE} \overset{(1)}= \arg\min_{\Vert v \Vert_2 = 1} \sum_{i = 1}^n X_i^\top (\mu^2 v_* v_*^\top + \mathbf I_p)^{-1} X_i \overset{(2)}= \arg\min_{\Vert v \Vert_2 = 1} \sum_{i = 1}^n X_i^\top \left(\mathbf I_p - \frac{\mu^2 v v^\top}{\mu^2 v^\top v + 1}\right) X_i \overset{(3)}= \arg\max_{\Vert v \Vert_2 = 1} \sum_{i = 1}^n X_i^\top v v^\top X_i \overset{(4)}= \arg\max_{\Vert v \Vert_2 = 1} v^\top X^\top X v.
+\hat v_{MLE} \overset{(1)}= \arg\min_{\Vert v \Vert_2 = 1} \sum_{i = 1}^n X_i^\top (\mu^2 v_\* v_\*^\top + \mathbf I_p)^{-1} X_i \overset{(2)}= \arg\min_{\Vert v \Vert_2 = 1} \sum_{i = 1}^n X_i^\top \left(\mathbf I_p - \frac{\mu^2 v v^\top}{\mu^2 v^\top v + 1}\right) X_i \overset{(3)}= \arg\max_{\Vert v \Vert_2 = 1} \sum_{i = 1}^n X_i^\top v v^\top X_i \overset{(4)}= \arg\max_{\Vert v \Vert_2 = 1} v^\top X^\top X v.
 $$
 Equality $(1)$ we have because maximizing the likelihood means is equivalent to minimizing the negative of the exponential (dropping the positive constant), $(2)$ by using Sherman-Morrison on the matrix inversion, $(3)$ by dropping the constant and because $v$ is norm-1, and the last step $(4)$ by the trace trick.
 
@@ -49,27 +49,27 @@ We see that the last expression is equivalent to PCA: finding the vector that ma
 
 ### High-Dimensional MLE Asymptotics
 
-Let's now consider PCA in the high-dimensional case. Suppose that the estimand $v_*$ has dimension $p$ that is allowed to scale with $n$ in some prescribed way. Let's subscript everything with a dummy index $\ell = 1, 2 \ldots $: we have $\{p_1, p_2 \ldots\}$, $\{n_1, n_2 \ldots\}$, even $\{\mu_1, \mu_2 \ldots\}$, and the estimand $\{{v_*}\_1, {v_*}\_2 \ldots\}$. As $\ell \rightarrow \infty$, for each indexed problem, we can use the principal component of $X_\ell^\top X_\ell$ to estimate ${v_*}_\ell$.
+Let's now consider PCA in the high-dimensional case. Suppose that the estimand $v_\*$ has dimension $p$ that is allowed to scale with $n$ in some prescribed way. Let's subscript everything with a dummy index $\ell = 1, 2 \ldots $: we have $\{p_1, p_2 \ldots\}$, $\{n_1, n_2 \ldots\}$, even $\{\mu_1, \mu_2 \ldots\}$, and the estimand $\{{v_\*}\_1, {v_\*}\_2 \ldots\}$. As $\ell \rightarrow \infty$, for each indexed problem, we can use the principal component of $X_\ell^\top X_\ell$ to estimate ${v_\*}_\ell$.
 
 If we do that, how should we evaluate the estimator we obtain? For example, we can consider
 $$
-\Vert \hat v(X_\ell^\top X_\ell) - v_* \Vert_2^2 \overset{p}\rightarrow \fbox{ ? }
+\Vert \hat v(X_\ell^\top X_\ell) - v_\* \Vert_2^2 \overset{p}\rightarrow \fbox{ ? }
 $$
 and
 $$
-\langle \hat v, v_* \rangle \overset{p}\rightarrow \fbox{ ? }
+\langle \hat v, v_\* \rangle \overset{p}\rightarrow \fbox{ ? }
 $$
 to see how well our estimator can do.
 
-For the entire remainder of this section, we will assume, without loss of generality, that $v_* = e_1 = [1, 0, 0 \ldots] \in \mathbb R^p$ for ease of analysis.
+For the entire remainder of this section, we will assume, without loss of generality, that $v_\* = e_1 = [1, 0, 0 \ldots] \in \mathbb R^p$ for ease of analysis.
 
 Let's do some heuristics first. Without a heuristic analysis, it can be difficult to find a target to work toward. If we do some heuristics first, even if highly non-rigorous, we can get an understanding for what we should mathematically expect.
 
-For some $\hat v \approx v_* = e_1$ (by some metric of comparison), we should have that $X^\top X e_1 \approx \lambda e_1$, because $\hat v$ is an eigenvector, and the eigenvectors should be somewhat robust to small perturbations.
+For some $\hat v \approx v_\* = e_1$ (by some metric of comparison), we should have that $X^\top X e_1 \approx \lambda e_1$, because $\hat v$ is an eigenvector, and the eigenvectors should be somewhat robust to small perturbations.
 
-With $v_* = e_1$, we have that
+With $v_\* = e_1$, we have that
 $$
-X = \mu u v_*^\top + Z = \begin{bmatrix}
+X = \mu u v_\*^\top + Z = \begin{bmatrix}
 \ \mu u_1 + Z_{11}^\top & Z_{12} & \ldots & Z_{1p} \ \\\\
 \ \mu u_1 + Z_{21}^\top & Z_{22} & \ldots & Z_{2p} \ \\\\
 \ \vdots & & & \vdots \\\\
@@ -121,7 +121,7 @@ $$
 $$
 so we want that $1 + \mu^2 \gg \sqrt{\frac{p}{n}(1 + \mu^2)}$. We have $1 + \mu^2 \gg \frac{p}{n}$, and because $\mu$ is a constant, this is equivalent to $n = \omega(p)$.
 
-Heuristically, then, if $\frac{p}{n} \rightarrow 0$, then $\langle \hat v, v_* \rangle \overset{p}\rightarrow 1$, and $\hat \lambda_1 \overset{p}\rightarrow \mu^2 + 1$. On the other hand, if $n = o(p)$, then $\frac{p}{n} \rightarrow \infty$, and it may be true that $\langle \hat v, v_* \rangle \rightarrow 0$: the first principal component would be completely orthogonal to the true estimand $v_* = e_1$, and the true direction is drowned out by the noise.
+Heuristically, then, if $\frac{p}{n} \rightarrow 0$, then $\langle \hat v, v_\* \rangle \overset{p}\rightarrow 1$, and $\hat \lambda_1 \overset{p}\rightarrow \mu^2 + 1$. On the other hand, if $n = o(p)$, then $\frac{p}{n} \rightarrow \infty$, and it may be true that $\langle \hat v, v_\* \rangle \rightarrow 0$: the first principal component would be completely orthogonal to the true estimand $v_\* = e_1$, and the true direction is drowned out by the noise.
 
 An edge case, termed endearingly by physicists as the only "nontrivial" case, is when $p = \Theta(n)$. 
 
@@ -133,14 +133,14 @@ We now formalize these heuristic arguments.
 <hr style="height:0.01px; visibility:hidden;" />
 Consider the rank-one (single spike) spiked matrix,
 $$
-X = \mu u v_*^\top + Z,
+X = \mu u v_\*^\top + Z,
 $$
-where $u_i \overset{iid}\sim \mathcal N \left(0, \frac{1}{n}\right)$, $Z_{ij} \overset{iid}\sim \mathcal N \left(0, \frac{1}{n}\right)$, and $v_*$ is a norm-1 deterministic vector we aim to estimate.
+where $u_i \overset{iid}\sim \mathcal N \left(0, \frac{1}{n}\right)$, $Z_{ij} \overset{iid}\sim \mathcal N \left(0, \frac{1}{n}\right)$, and $v_\*$ is a norm-1 deterministic vector we aim to estimate.
 
 Then, in the high-dimensional limit where $p, n \rightarrow \infty$ and $\frac{p}{n} \rightarrow 0$ and $\mu$ is fixed, then
 <ol type="i">
   <li>$\lambda_1(X^\top X) \overset{p}\rightarrow \mu^2 + 1$.</li>
-  <li>$| \langle \hat v, v_* \rangle | \overset{p}\rightarrow 1$.</li>
+  <li>$| \langle \hat v, v_\* \rangle | \overset{p}\rightarrow 1$.</li>
 </ol>
 Hence, $\hat v$ is consistent.
 </div>
