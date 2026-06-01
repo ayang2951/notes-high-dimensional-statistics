@@ -180,14 +180,48 @@ is called a <i><strong>principal submatrix</strong></i> of $A$.
 
 <div class="callout theorem"><span class="label">Theorem: Cauchy's Interlacing Theorem</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-Let $A \in \mathbb R^{n \times n}$ be a symmetric matrix, and let $B \in \mathbb R^{m \times m}$ be a principal submatrix of $A$. Then, for all $j \in \{1, 2 \ldots m\}$, we have that
+Let $A \in \mathbb R^{n \times n}$ be a symmetric matrix with eigenvalues $\lambda_1(A) \geq \lambda_2(A) \ldots \geq \lambda_n(A)$. Let $B \in \mathbb R^{m \times m}$ be a principal submatrix of $A$. Then, for all $j \in \{1, 2 \ldots m\}$, we have that
 $$
-\lambda_j(A) \geq \lambda_j(B) \geq \ldots \lambda_{j + n - m}(A).
+\lambda_j(A) \geq \lambda_j(B) \geq \lambda_{j + n - m}(A).
 $$
 This result is called <i><strong>Cauchy's interlacing theorem</strong></i>.
 </div>
 
-Cauchy's interlacing theorem has an important implication for us. As we discussed before, we have that
+A variant of Cauchy's interlacing theorem is the one where the $n \times n$ principal submatrix is obtained by deleting only the $i^{\text{th}}$ row and column.
+
+<div class="callout theorem"><span class="label">Theorem: Cauchy's Interlacing Theorem, Special $n - 1$ Case</span><br/>
+<hr style="height:0.01px; visibility:hidden;" />
+Let $A \in \mathbb R^{n \times n}$ be a symmetric matrix with eigenvalues $\lambda_1(A) \geq \lambda_2(A) \ldots \geq \lambda_n(A)$. Let $B \in \mathbb R^{n-1 \times n-1}$ be a principal submatrix of $A$ with eigenvalues $\lambda_1(B) \geq \lambda_2(B) \ldots \geq \lambda_{n - 1}(B)$. Then we have that
+$$
+\lambda_j(A) \geq \lambda_j(B) \geq \lambda_{j +1 }(A)
+$$
+for $j \in [n - 1]$, or, equivalently, 
+$$
+\lambda_1(A) \geq \lambda_1(B) \geq \lambda_2(A) \geq \lambda_2(B) \ldots \geq \lambda_{n - 1}(A) \geq \lambda_{n - 1}(B) \geq \lambda_n(A),
+$$
+where the eigenvalues of $B$ are interlaced with those of $A$.
+</div>
+
+<details class="collapsible">
+<summary>Proof</summary>
+<div class="collapsible__content">
+The proof of Cauchy's interlacing theorem requires the <i><strong>Courant-Fischer</i></strong> theorem, which we state here.
+
+<div class="callout theorem"><span class="label">Theorem: Courant-Fischer</span><br/>
+<hr style="height:0.01px; visibility:hidden;" />
+Let $M \in \mathbb R^{m \times m}$ be a symmetric matrix, and let $\theta_1 \geq \theta_2 \ldots \geq \theta_m$ be its eigenvalues. Then, for $j \in [m]$, where $S_k^m$ is a subspace of $\mathbb R^m$ with dimension $k$, we have that
+$$
+\theta_j = \max_{S^m_j} \min_{x \in S_j^m\backslash\{0\}} R_M(x) = \min_{S^m_{m - j + 1}} \max_{x \in S^m_{m - j + 1}\backslash\{0\}} R_M(x),
+$$
+where $R_M(x)$ is the Rayleigh quotient of $M$ and $x$.
+</div>
+  
+</div>
+</details>
+
+
+
+With the special case, we see that only the first and last (largest and smallest) eigenvalues are not "controlled"" by the eigenvalues of the principal submatrix. This has an important implication for us. As we discussed before, we have that
 $$
 X^\top X = \begin{bmatrix}
 \ X_1 ^\top X_1 & X_1^\top X_{-1} \ \\\\

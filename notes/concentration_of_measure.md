@@ -400,7 +400,7 @@ We present the proof of the first case, where $X \sim \text{Unif}([a, b])$: we s
 $$
 \text{Var}(f(X)) \leq \frac{1}{2} (b - a) \cdot \mathbb E \left[(f'(X))^2\right].
 $$
-We shall use the standard ghost sample trick: let $Y$ be an independent copy of $X$, and we have that $\text{Var}(f(X)) = \frac{1}{2} \mathbb E_{X, Y} \left[(f(X) - f(Y))^2\right]$. Hence, our goal is to bound $\mathbb E_{X, Y} \left[(f(X) - f(Y))^2\right]$. Because $f$ is differentiable, we have that
+We shall use a standard ghost sample trick: let $Y$ be an independent copy of $X$, and we have that $\text{Var}(f(X)) = \frac{1}{2} \mathbb E_{X, Y} \left[(f(X) - f(Y))^2\right]$. Hence, our goal is to bound $\mathbb E_{X, Y} \left[(f(X) - f(Y))^2\right]$. Because $f$ is differentiable, we have that
 $$
 f(X) - f(Y) = \int_Y^X f'(t) dt.
 $$

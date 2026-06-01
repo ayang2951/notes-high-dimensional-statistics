@@ -6,7 +6,10 @@ const ORDERED_NOTES = [
   { file: "high_dim_stats.md", title: "High Dimensional Statistics" },
   { file: "concentration_of_measure.md", title: "Concentration of Measure" },
   { file: "spiked_matrix.md", title: "Single-Spike Spiked Matrix Model" },
-  { file: "random_matrix_theory.md", title: "Random Matrix Theory" }
+  { file: "random_matrix_theory.md", title: "Random Matrix Theory" },
+  { file: "laplace_method.md", title: "Laplace Method" },
+  { file: "large_deviation.md", title: "Large Deviation Principle" },
+  { file: "replica_method.md", title: "Replica Method" }
 ];
 
 function $id(id){ return document.getElementById(id); }
