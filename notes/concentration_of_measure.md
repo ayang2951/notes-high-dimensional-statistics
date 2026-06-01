@@ -16,7 +16,7 @@ One issue the WLLN fails to address is the rate at which the sample mean converg
 
 <div class="callout theorem"><span class="label">Theorem: Central Limit Theorem</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-Let $\{X_n\}_{n = 1}^\infty$ be a sequence of square integrable and independent and identically distributed random variables with mean $\mu$ and variance $\sigma^2$. Then the <i><strong>central limit theorem</i></strong> states that for the sample mean, defined for each $n$ as $\bar X_n \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$,
+Let $\\{X_n\\}_{n = 1}^\infty$ be a sequence of square integrable and independent and identically distributed random variables with mean $\mu$ and variance $\sigma^2$. Then the <i><strong>central limit theorem</i></strong> states that for the sample mean, defined for each $n$ as $\bar X_n \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$,
 $$
 \sqrt{n}(\bar X_n - \mu) \overset{d}\rightarrow \mathcal N(0, \sigma^2).
 $$
@@ -24,7 +24,7 @@ $$
 
 Having the scaling and the limiting distribution seems to be very helpful for characterizing how good an asymptotic analysis can be. However, it's important to note that the central limit theorem itself is <i>also</i> an asymptotic analysis. How do we characterize how well <i>it</i> can do? We could keep going to higher-order approximations, using an Edgeworth expansion, for example. But instead, we'll pivot to <i>concentration of measure</i>, something that gives us finite sample results (in the form of strict upper bounds that hold at any $n$) at the cost of an exact characterization of error in asymptotics (in the form of telling us the shape of a distribution, for example).
 
-What should these results look like? Let's provide a rough heuristic first to examine what we can look for. Let $\{X_n\}_{n = 1}^\infty$ be iid with mean $\mathbb E[X]$ and variance $0$.
+What should these results look like? Let's provide a rough heuristic first to examine what we can look for. Let $\\{X_n\\}_{n = 1}^\infty$ be iid with mean $\mathbb E[X]$ and variance $0$.
 
 The form we want is
 $$
@@ -52,9 +52,9 @@ The first result we state is Hoeffding's inequality.
 
 <div class="callout theorem"><span class="label">Theorem: Hoeffding's Inequality</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-Let $\{X_i\}_{i = 1}^n$ be independent random variables where each is bounded: $a_i \leq X \leq b_i$. Define $X \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$ and define $a \triangleq \frac{1}{n}\sum_{i = 1}^n a_i$ and $b \triangleq \frac{1}{n} \sum_{i = 1}^n b_i$. Then
+Let $\\{X_i\\}_{i = 1}^n$ be independent random variables where each is bounded: $a_i \leq X \leq b_i$. Define $X \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$ and define $a \triangleq \frac{1}{n}\sum_{i = 1}^n a_i$ and $b \triangleq \frac{1}{n} \sum_{i = 1}^n b_i$. Then
 $$
-\mathbb P \left( \left|\frac{1}{n} \sum_{i = 1}^n - \mathbb E[X]\right| > t \right) \leq 2 \cdot \exp \left\{ -\frac{2}{b - a} n t^2  \right\}
+\mathbb P \left( \left|\frac{1}{n} \sum_{i = 1}^n - \mathbb E[X]\right| > t \right) \leq 2 \cdot \exp \left\\{ -\frac{2}{b - a} n t^2  \right\\}
 $$
 </div>
 
@@ -64,7 +64,7 @@ Let's compare this result to the simplest case: a finite-sample analysis of Gaus
 <hr style="height:0.01px; visibility:hidden;" />
 Let $X_1, X_2 \ldots X_n \sim \mathcal N(0, \sigma^2)$. Then
 $$
-\mathbb P \left(\left|\frac{1}{n} \sum_{i = 1}^n X_i\right| > t \right) = \mathbb P_{Z \sim \mathcal N(0, 1)} \left(|\sigma Z| > \sqrt{n} t\right) \leq 2 \int_{\sqrt{n}t}^\infty \frac{z}{\sqrt{n}t} \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{z^2}{2\sigma^2}} dz \ \ \propto \exp \left\{-\frac{1}{2\sigma^2} nt^2\right\}
+\mathbb P \left(\left|\frac{1}{n} \sum_{i = 1}^n X_i\right| > t \right) = \mathbb P_{Z \sim \mathcal N(0, 1)} \left(|\sigma Z| > \sqrt{n} t\right) \leq 2 \int_{\sqrt{n}t}^\infty \frac{z}{\sqrt{n}t} \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{z^2}{2\sigma^2}} dz \ \ \propto \exp \left\\{-\frac{1}{2\sigma^2} nt^2\right\\}
 $$
 </div>
 
@@ -76,7 +76,7 @@ Hence, Hoeffding seems not to be the tightest bound we can get. Bernstein's ineq
 <hr style="height:0.01px; visibility:hidden;" />
 Let $X_1, X_2 \ldots X_n$ be zero-mean iid random variables where $|X| < M$. Then
 $$
-\mathbb P \left(\left|\frac{1}{n} \sum_{i = 1}^n X_i\right| > t\right) \leq 2 \cdot \exp \left\{-\frac{n^2t^2}{2 \left(n \text{Var}(X) + \frac{Mt}{3}\right)}\right\}
+\mathbb P \left(\left|\frac{1}{n} \sum_{i = 1}^n X_i\right| > t\right) \leq 2 \cdot \exp \left\\{-\frac{n^2t^2}{2 \left(n \text{Var}(X) + \frac{Mt}{3}\right)}\right\\}
 $$
 </div>
 
@@ -86,7 +86,7 @@ This motivates us to think about what should matter when giving concentration re
 
 <div class="callout example"><span class="label">Example: Gaussian Tail Behavior</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-Let $X_1, X_2 \ldots X_n \overset{iid}\sim \mathcal N(0, 1)$. Then for $X_{(n)} \triangleq \max \{X_1, X_2 \ldots X_n\}$, i.e. the $n$th order statistic,
+Let $X_1, X_2 \ldots X_n \overset{iid}\sim \mathcal N(0, 1)$. Then for $X_{(n)} \triangleq \max \\{X_1, X_2 \ldots X_n\\}$, i.e. the $n$th order statistic,
 $$
 \frac{X_{(n)}}{\sqrt{2 \log n}} \overset{p}\rightarrow 1.
 $$
@@ -160,9 +160,9 @@ This result is known as <i><strong>Markov's inequality</i></strong>.
 <div class="collapsible__content">
 We have that
 $$
-\mathbb P(X > t) \ \overset{(1)}= \ \mathbb E[\mathbb I_{\{X > t\}}] \ \overset{(2)}\leq \ \mathbb E\left[\mathbb I_{\{X > t\}}  \cdot \frac{X}{t}\right] \ \overset{(3)}\leq \ \frac{\mathbb E[X]}{t}.
+\mathbb P(X > t) \ \overset{(1)}= \ \mathbb E[\mathbb I_{\\{X > t\\}}] \ \overset{(2)}\leq \ \mathbb E\left[\mathbb I_{\\{X > t\\}}  \cdot \frac{X}{t}\right] \ \overset{(3)}\leq \ \frac{\mathbb E[X]}{t}.
 $$
-Equality $(1)$ is by definition of expectation over the probability measure, inequalities $(2)$ and $(3)$ are because $\frac{X}{t} > 1$ on the domain of integration and $\mathbb I_{\{X > t\}} \leq 1$, respectively, and then applying the nonnegativity of $X$ and the monotonicity of expectation.
+Equality $(1)$ is by definition of expectation over the probability measure, inequalities $(2)$ and $(3)$ are because $\frac{X}{t} > 1$ on the domain of integration and $\mathbb I_{\\{X > t\\}} \leq 1$, respectively, and then applying the nonnegativity of $X$ and the monotonicity of expectation.
 </div>
 </details>
 
@@ -435,7 +435,7 @@ One of the very useful properties of the Poincaré inequality is <i>tensorizatio
 
 <div class="callout theorem"><span class="label">Theorem: Tensorization of the Poincaré Inequality</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-Let $X_1, X_2 \ldots X_n$ be independent random variables satisfying the Poincaré inequality with constants $c_i$. Then the random vector $X = (X_i)_{i = 1}^n$ satisfies the Poincaré inequality with constant $c = \max \{c_1, c_2 \ldots c_n\}$, i.e.
+Let $X_1, X_2 \ldots X_n$ be independent random variables satisfying the Poincaré inequality with constants $c_i$. Then the random vector $X = (X_i)_{i = 1}^n$ satisfies the Poincaré inequality with constant $c = \max \\{c_1, c_2 \ldots c_n\\}$, i.e.
 $$
 \text{Var}(f(X)) \leq c \cdot \mathbb E\left[\Vert \nabla f(X) \Vert_2^2\right]
 $$
@@ -600,7 +600,7 @@ Just as with Poincaré, log-Sobolev enjoys a tensorization property.
 
 <div class="callout theorem"><span class="label">Theorem: Tensorization Property of Log-Sobolev</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-For probability measures $\mu_1, \mu_2 \ldots \mu_n$ on $\mathbb R$, suppose that each $\mu_i$ satisfies the log-Sobolev inequality with constant $c_i$. Then $\mu_1 \otimes \mu_2 \ldots \otimes \mu_n$ satisfies log-Sobolev with constant $c = \max \{c_1, c_2 \ldots c_n\}$.
+For probability measures $\mu_1, \mu_2 \ldots \mu_n$ on $\mathbb R$, suppose that each $\mu_i$ satisfies the log-Sobolev inequality with constant $c_i$. Then $\mu_1 \otimes \mu_2 \ldots \otimes \mu_n$ satisfies log-Sobolev with constant $c = \max \\{c_1, c_2 \ldots c_n\\}$.
 </div>
 
 The proof of this is in Wainwright's book.
@@ -618,7 +618,7 @@ Now, we introduce a core theorem that makes the connection between the log-Sobol
 <hr style="height:0.01px; visibility:hidden;" />
 Let $\mu$ be a measure on $\mathbb R$ satisfying the log-Sobolev inequality with constant $c$. Then, for all $L$-Lipschitz functions $f$, we have that
 $$
-\mathbb P \left(\left|f(x) - \mathbb E[f(x)]\right| > t \right) \leq 2 \cdot \exp \left\{-\frac{t^2}{2c L^2}\right\}.
+\mathbb P \left(\left|f(x) - \mathbb E[f(x)]\right| > t \right) \leq 2 \cdot \exp \left\\{-\frac{t^2}{2c L^2}\right\\}.
 $$
 This theorem is often referred to as <i><strong>Herbst's theorem</i></strong>.
 </div>
