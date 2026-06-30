@@ -54,7 +54,7 @@ The first result we state is Hoeffding's inequality.
 <hr style="height:0.01px; visibility:hidden;" />
 Let $\\{X_i\\}_{i = 1}^n$ be independent random variables where each is bounded: $a_i \leq X \leq b_i$. Define $X \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$ and define $a \triangleq \frac{1}{n}\sum_{i = 1}^n a_i$ and $b \triangleq \frac{1}{n} \sum_{i = 1}^n b_i$. Then
 $$
-\mathbb P \left( \left|\frac{1}{n} \sum_{i = 1}^n - \mathbb E[X]\right| > t \right) \leq 2 \cdot \exp \left\\{ -\frac{2}{b - a} n t^2  \right\\}
+\mathbb P \left( \left|\frac{1}{n} \sum_{i = 1}^n - \mathbb E[X]\right| > t \right) \leq 2 \cdot \exp \left\{ -\frac{2}{b - a} n t^2  \right\}
 $$
 </div>
 
