@@ -64,7 +64,7 @@ Let's compare this result to the simplest case: a finite-sample analysis of Gaus
 <hr style="height:0.01px; visibility:hidden;" />
 Let $X_1, X_2 \ldots X_n \sim \mathcal N(0, \sigma^2)$. Then
 $$
-\mathbb P \left(\left|\frac{1}{n} \sum_{i = 1}^n X_i\right| > t \right) = \mathbb P_{Z \sim \mathcal N(0, 1)} \left(|\sigma Z| > \sqrt{n} t\right) \leq 2 \int_{\sqrt{n}t}^\infty \frac{z}{\sqrt{n}t} \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{z^2}{2\sigma^2}} dz \ \ \propto \exp \left\\{-\frac{1}{2\sigma^2} nt^2\right\\}
+\mathbb P \left(\left|\frac{1}{n} \sum_{i = 1}^n X_i\right| > t \right) = \mathbb P_{Z \sim \mathcal N(0, 1)} \left(|\sigma Z| > \sqrt{n} t\right) \leq 2 \int_{\sqrt{n}t}^\infty \frac{z}{\sqrt{n}t} \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{z^2}{2\sigma^2}} dz \ \ \propto \exp \left\{-\frac{1}{2\sigma^2} nt^2\right\}
 $$
 </div>
 
@@ -76,7 +76,7 @@ Hence, Hoeffding seems not to be the tightest bound we can get. Bernstein's ineq
 <hr style="height:0.01px; visibility:hidden;" />
 Let $X_1, X_2 \ldots X_n$ be zero-mean iid random variables where $|X| < M$. Then
 $$
-\mathbb P \left(\left|\frac{1}{n} \sum_{i = 1}^n X_i\right| > t\right) \leq 2 \cdot \exp \left\\{-\frac{n^2t^2}{2 \left(n \text{Var}(X) + \frac{Mt}{3}\right)}\right\\}
+\mathbb P \left(\left|\frac{1}{n} \sum_{i = 1}^n X_i\right| > t\right) \leq 2 \cdot \exp \left\{-\frac{n^2t^2}{2 \left(n \text{Var}(X) + \frac{Mt}{3}\right)}\right\}
 $$
 </div>
 
@@ -618,7 +618,7 @@ Now, we introduce a core theorem that makes the connection between the log-Sobol
 <hr style="height:0.01px; visibility:hidden;" />
 Let $\mu$ be a measure on $\mathbb R$ satisfying the log-Sobolev inequality with constant $c$. Then, for all $L$-Lipschitz functions $f$, we have that
 $$
-\mathbb P \left(\left|f(x) - \mathbb E[f(x)]\right| > t \right) \leq 2 \cdot \exp \left\\{-\frac{t^2}{2c L^2}\right\\}.
+\mathbb P \left(\left|f(x) - \mathbb E[f(x)]\right| > t \right) \leq 2 \cdot \exp \left\{-\frac{t^2}{2c L^2}\right\}.
 $$
 This theorem is often referred to as <i><strong>Herbst's theorem</i></strong>.
 </div>
