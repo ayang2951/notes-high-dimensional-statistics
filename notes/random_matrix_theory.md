@@ -124,7 +124,7 @@ Let $X \in \mathbb R^{n \times p}$ be a random matrix where $X_{ij} \overset{iid
 
 Suppose for simplicity that $p < n$, i.e. the matrix $X^\top X$ is full rank. Then $\mu_n$ converges weakly in probability to the density
 $$
-f_{\gamma}(x) = \frac{1}{2\pi \gamma x} \sqrt{{(\gamma_{+} - x)} (x - \gamma_{-})} \cdot \mathbb I_{[\gamma_{-}, \gamma_{+}]},
+f_{\gamma}(x) = \frac{1}{2\pi \gamma x} \sqrt{(\gamma_+ - x) (x - \gamma_-)} \cdot \mathbb I_{[\gamma_-, \gamma_+]},
 $$
 where, recall, $\frac{p}{n} \rightarrow \gamma$ is the aspect ratio, and $\lambda_{-} \triangleq (1 - \sqrt{\gamma})^2$, $\lambda_{+} \triangleq (1 + \sqrt{\gamma})^2$.
 </div>

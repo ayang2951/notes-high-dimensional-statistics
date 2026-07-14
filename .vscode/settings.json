@@ -1,3 +1,15 @@
 {
-    "liveServer.settings.port": 5503
+    "courseNotesPreview.siteTitle": "Notes on High-Dimensional Statistics",
+    "courseNotesPreview.siteSubtitle": "Notes on a high-dimensional statistics course at the Department of Statistics of Columbia University.",
+    "courseNotesPreview.workspaceCssFiles": ["styles.css"],
+    "courseNotesPreview.autoNumberCallouts": true,
+    "courseNotesPreview.openCollapsedProofs": false,
+    "courseNotesPreview.noteFiles": [
+      "notes/high_dim_stats.md",
+      "notes/concentration_of_measure.md",
+      "notes/spiked_matrix.md",
+      "notes/random_matrix_theory.md",
+      "notes/laplace_method.md",
+      "notes/large_deviation.md"
+    ]
 }
