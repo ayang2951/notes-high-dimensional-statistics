@@ -54,7 +54,7 @@ h(x) \ = \ h(a)+h'(a)(x-a)+\frac{1}{2}h''(a)(x-a)^2+O((x-a)^3) \ = \ \frac{1}{2}
 $$
 So, near $a$, the integral behaves like
 $$
-\int e^{-nh(x)}dx \approx \int \exp\left\\{-\frac{n}{2}h''(a)(x-a)^2\right\\}dx.
+\int e^{-nh(x)}dx \approx \int \exp\left\{-\frac{n}{2}h''(a)(x-a)^2\right\}dx.
 $$
 This is a Gaussian integral, and we see that the variance is $\frac{1}{nh''(a)}$, which should give us a hint as the to the correct order.
 
@@ -83,15 +83,15 @@ $$
 The scaling we chose, then, is a reasonable one, since, after multiplying by $n$, we still have that the error is $o(1)$.
 Therefore, on this shrinking interval,
 $$
-e^{-nh(x)} \approx \exp\left\\{-\frac{n}{2}h''(a)(x-a)^2\right\\}.
+e^{-nh(x)} \approx \exp\left\{-\frac{n}{2}h''(a)(x-a)^2\right\}.
 $$
 So the main part of the integral should satisfy
 $$
-\int_{a-\delta_n}^{a+\delta_n}e^{-nh(x)}dx \approx \int_{a-\delta_n}^{a+\delta_n}\exp\left\\{-\frac{n}{2}h''(a)(x-a)^2\right\\}dx.
+\int_{a-\delta_n}^{a+\delta_n}e^{-nh(x)}dx \approx \int_{a-\delta_n}^{a+\delta_n}\exp\left\{-\frac{n}{2}h''(a)(x-a)^2\right\}dx.
 $$
 We have a choice here: either we can try to use Gaussian integrals, using the inverse variance and Gaussian tail bounds, to compute it exactly, or we could do some more clever approximation: use the change of variables $u=\sqrt{nh''(a)}(x-a)$. Then
 $$
-\int_{a-\delta_n}^{a+\delta_n}\exp\left\\{-\frac{n}{2}h''(a)(x-a)^2\right\\}dx \ = \ \frac{1}{\sqrt{nh''(a)}}\int_{-\sqrt{nh''(a)}\delta_n}^{\sqrt{nh''(a)}\delta_n}e^{-u^2/2}du \ \overset{(1)}\sim \ \frac{1}{\sqrt{nh''(a)}}\int_{-\infty}^{\infty}e^{-u^2/2}du = \sqrt{\frac{2\pi}{nh''(a)}}.
+\int_{a-\delta_n}^{a+\delta_n}\exp\left\{-\frac{n}{2}h''(a)(x-a)^2\right\}dx \ = \ \frac{1}{\sqrt{nh''(a)}}\int_{-\sqrt{nh''(a)}\delta_n}^{\sqrt{nh''(a)}\delta_n}e^{-u^2/2}du \ \overset{(1)}\sim \ \frac{1}{\sqrt{nh''(a)}}\int_{-\infty}^{\infty}e^{-u^2/2}du = \sqrt{\frac{2\pi}{nh''(a)}}.
 $$
 Asymptotic equivalence $(1)$ is because $\sqrt{n}\delta_n=n^{1/10}\rightarrow\infty$, so the limits of integration go to $\pm\infty$. Here is where we see that the specific scaling we chose was a good choice.
 

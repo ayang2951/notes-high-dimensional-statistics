@@ -16,7 +16,7 @@ One issue the WLLN fails to address is the rate at which the sample mean converg
 
 <div class="callout theorem"><span class="label">Theorem: Central Limit Theorem</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-Let $\\{X_n\\}_{n = 1}^\infty$ be a sequence of square integrable and independent and identically distributed random variables with mean $\mu$ and variance $\sigma^2$. Then the <i><strong>central limit theorem</i></strong> states that for the sample mean, defined for each $n$ as $\bar X_n \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$,
+Let $\{X_n\}_{n = 1}^\infty$ be a sequence of square integrable and independent and identically distributed random variables with mean $\mu$ and variance $\sigma^2$. Then the <i><strong>central limit theorem</i></strong> states that for the sample mean, defined for each $n$ as $\bar X_n \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$,
 $$
 \sqrt{n}(\bar X_n - \mu) \overset{d}\rightarrow \mathcal N(0, \sigma^2).
 $$
@@ -24,7 +24,7 @@ $$
 
 Having the scaling and the limiting distribution seems to be very helpful for characterizing how good an asymptotic analysis can be. However, it's important to note that the central limit theorem itself is <i>also</i> an asymptotic analysis. How do we characterize how well <i>it</i> can do? We could keep going to higher-order approximations, using an Edgeworth expansion, for example. But instead, we'll pivot to <i>concentration of measure</i>, something that gives us finite sample results (in the form of strict upper bounds that hold at any $n$) at the cost of an exact characterization of error in asymptotics (in the form of telling us the shape of a distribution, for example).
 
-What should these results look like? Let's provide a rough heuristic first to examine what we can look for. Let $\\{X_n\\}_{n = 1}^\infty$ be iid with mean $\mathbb E[X]$ and variance $0$.
+What should these results look like? Let's provide a rough heuristic first to examine what we can look for. Let $\{X_n\}_{n = 1}^\infty$ be iid with mean $\mathbb E[X]$ and variance $0$.
 
 The form we want is
 $$
@@ -36,7 +36,7 @@ $$
 \overset{(1)}= \ \mathbb P_{Z \sim \mathcal N(0, 1)} \bigg(\big|Z\big| > \sqrt{n} t\bigg) \
 = \ 2 \cdot \int_{\sqrt{n}t}^\infty \frac{1}{\sqrt{2\pi}} e^{-\frac{z^2}{2}} dz \
 \overset{(2)}\leq \ \frac{2}{\sqrt{2\pi}} \int_{\sqrt{n}t}^\infty \frac{z}{\sqrt{n}t} e^{-\frac{z^2}{2}} dz \ 
-= \ \sqrt{\frac{2}{\pi}} \frac{1}{\sqrt{n}t} \exp \left\\{ -\frac{nt^2}{2}\right\\} \
+= \ \sqrt{\frac{2}{\pi}} \frac{1}{\sqrt{n}t} \exp \left\{ -\frac{nt^2}{2}\right\} \
 \leq \ c_1 e^{-c_2 \cdot nt^2},
 $$
 where the equality $(1)$ is our unreasonable application of the CLT at finite $n$ and inequality $(2)$ is because $\frac{x}{\sqrt{n} t} > 1$ on our specifed domain of integration. Hence, in some very nice case scenarios, perhaps we can expect this exponential rate.
@@ -52,7 +52,7 @@ The first result we state is Hoeffding's inequality.
 
 <div class="callout theorem"><span class="label">Theorem: Hoeffding's Inequality</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-Let $\\{X_i\\}_{i = 1}^n$ be independent random variables where each is bounded: $a_i \leq X \leq b_i$. Define $X \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$ and define $a \triangleq \frac{1}{n}\sum_{i = 1}^n a_i$ and $b \triangleq \frac{1}{n} \sum_{i = 1}^n b_i$. Then
+Let $\{X_i\}_{i = 1}^n$ be independent random variables where each is bounded: $a_i \leq X \leq b_i$. Define $X \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$ and define $a \triangleq \frac{1}{n}\sum_{i = 1}^n a_i$ and $b \triangleq \frac{1}{n} \sum_{i = 1}^n b_i$. Then
 $$
 \mathbb P \left( \left|\frac{1}{n} \sum_{i = 1}^n - \mathbb E[X]\right| > t \right) \leq 2 \cdot \exp \left\{ -\frac{2}{b - a} n t^2  \right\}
 $$
@@ -82,11 +82,11 @@ $$
 
 Note that the above two results are for bounded random variables. We can conduct a thought experiment: suppose I have $n$ iid random variables from a bounded distribution, for example if $X \in [-1, 1]$. Imagine removing one random variable: this can give us some idea of how the sample can vary. In the case where $X$ is bound within a very small range, removing 1 datapoint should be almost imperceptible. However, imagine removing a single datapoint from an unbounded distribution: although (if the distribution is sufficiently nice) the bulk should be within some "typical" range, there can be outliers that severely impact how the sample looks: that single extreme value could dominate the sum.
 
-This motivates us to think about what should matter when giving concentration results: something that should matter a lot, given our thought experiment above, is the tail behavior of the distribution. How would $\max \\{|X_1|, |X_2| \ldots |X_n|\\}$ behave?
+This motivates us to think about what should matter when giving concentration results: something that should matter a lot, given our thought experiment above, is the tail behavior of the distribution. How would $\max \{|X_1|, |X_2| \ldots |X_n|\}$ behave?
 
 <div class="callout example"><span class="label">Example: Gaussian Tail Behavior</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-Let $X_1, X_2 \ldots X_n \overset{iid}\sim \mathcal N(0, 1)$. Then for $X_{(n)} \triangleq \max \\{X_1, X_2 \ldots X_n\\}$, i.e. the $n$th order statistic,
+Let $X_1, X_2 \ldots X_n \overset{iid}\sim \mathcal N(0, 1)$. Then for $X_{(n)} \triangleq \max \{X_1, X_2 \ldots X_n\}$, i.e. the $n$th order statistic,
 $$
 \frac{X_{(n)}}{\sqrt{2 \log n}} \overset{p}\rightarrow 1.
 $$
@@ -160,9 +160,9 @@ This result is known as <i><strong>Markov's inequality</i></strong>.
 <div class="collapsible__content">
 We have that
 $$
-\mathbb P(X > t) \ \overset{(1)}= \ \mathbb E[\mathbb I_{\\{X > t\\}}] \ \overset{(2)}\leq \ \mathbb E\left[\mathbb I_{\\{X > t\\}}  \cdot \frac{X}{t}\right] \ \overset{(3)}\leq \ \frac{\mathbb E[X]}{t}.
+\mathbb P(X > t) \ \overset{(1)}= \ \mathbb E[\mathbb I_{\{X > t\}}] \ \overset{(2)}\leq \ \mathbb E\left[\mathbb I_{\{X > t\}}  \cdot \frac{X}{t}\right] \ \overset{(3)}\leq \ \frac{\mathbb E[X]}{t}.
 $$
-Equality $(1)$ is by definition of expectation over the probability measure, inequalities $(2)$ and $(3)$ are because $\frac{X}{t} > 1$ on the domain of integration and $\mathbb I_{\\{X > t\\}} \leq 1$, respectively, and then applying the nonnegativity of $X$ and the monotonicity of expectation.
+Equality $(1)$ is by definition of expectation over the probability measure, inequalities $(2)$ and $(3)$ are because $\frac{X}{t} > 1$ on the domain of integration and $\mathbb I_{\{X > t\}} \leq 1$, respectively, and then applying the nonnegativity of $X$ and the monotonicity of expectation.
 </div>
 </details>
 
@@ -435,7 +435,7 @@ One of the very useful properties of the Poincaré inequality is <i>tensorizatio
 
 <div class="callout theorem"><span class="label">Theorem: Tensorization of the Poincaré Inequality</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-Let $X_1, X_2 \ldots X_n$ be independent random variables satisfying the Poincaré inequality with constants $c_i$. Then the random vector $X = (X_i)_{i = 1}^n$ satisfies the Poincaré inequality with constant $c = \max \\{c_1, c_2 \ldots c_n\\}$, i.e.
+Let $X_1, X_2 \ldots X_n$ be independent random variables satisfying the Poincaré inequality with constants $c_i$. Then the random vector $X = (X_i)_{i = 1}^n$ satisfies the Poincaré inequality with constant $c = \max \{c_1, c_2 \ldots c_n\}$, i.e.
 $$
 \text{Var}(f(X)) \leq c \cdot \mathbb E\left[\Vert \nabla f(X) \Vert_2^2\right]
 $$
@@ -463,7 +463,7 @@ Therefore, returning to our whole expression, we have
 $$
 \text{Var}(f(X)) \ 
 \leq \ \frac{1}{2} \sum_{i = 1}^n 2 \cdot c_i \mathbb E_{\vec X} \left[\left(\frac{\partial}{\partial X_i} f(\vec X_n)\right)^2\right] \
-\leq \max \\{c_1, c_2 \ldots c_n\\} \cdot \mathbb E_{\vec X_n} \left[\sum_{i = 1}^n \left(\frac{\partial}{\partial X_i} f(\vec X_n)\right)^2\right] \
+\leq \max \{c_1, c_2 \ldots c_n\} \cdot \mathbb E_{\vec X_n} \left[\sum_{i = 1}^n \left(\frac{\partial}{\partial X_i} f(\vec X_n)\right)^2\right] \
 = \ c \cdot \mathbb E_{\vec X_n} \bigg[\Vert \nabla f(X) \Vert_2^2\bigg].
 $$
 </div>
@@ -600,7 +600,7 @@ Just as with Poincaré, log-Sobolev enjoys a tensorization property.
 
 <div class="callout theorem"><span class="label">Theorem: Tensorization Property of Log-Sobolev</span><br/>
 <hr style="height:0.01px; visibility:hidden;" />
-For probability measures $\mu_1, \mu_2 \ldots \mu_n$ on $\mathbb R$, suppose that each $\mu_i$ satisfies the log-Sobolev inequality with constant $c_i$. Then $\mu_1 \otimes \mu_2 \ldots \otimes \mu_n$ satisfies log-Sobolev with constant $c = \max \\{c_1, c_2 \ldots c_n\\}$.
+For probability measures $\mu_1, \mu_2 \ldots \mu_n$ on $\mathbb R$, suppose that each $\mu_i$ satisfies the log-Sobolev inequality with constant $c_i$. Then $\mu_1 \otimes \mu_2 \ldots \otimes \mu_n$ satisfies log-Sobolev with constant $c = \max \{c_1, c_2 \ldots c_n\}$.
 </div>
 
 The proof of this is in Wainwright's book.
@@ -631,11 +631,11 @@ Let $A \in \mathbb R^{n \times p}$ where $A_{ij} \overset{iid}\sim \mathcal N(0,
 
 We have shown before that $\sigma_\max(A)$ is 1-Lipschitz, i.e. $|\sigma_\max(A) - \sigma_\max(B)| \leq \Vert A - B \Vert_F$. Hence, we have that
 $$
-\mathbb P \left(\left|\sigma_\max(A) - \mathbb E[\sigma_\max(A)]\right| > t \right) \leq 2 \exp \left\\{-\frac{t^2}{2}\right\\}.
+\mathbb P \left(\left|\sigma_\max(A) - \mathbb E[\sigma_\max(A)]\right| > t \right) \leq 2 \exp \left\{-\frac{t^2}{2}\right\}.
 $$
 It turns out that the analysis of the term $\mathbb E[\sigma_\max(A)]$ is nontrivial. We will eventually use something called Gordon's comparison inequality, Dudley's inequalities and discretization with union bounds, which give $\sqrt{n} - \sqrt{p} \leq \mathbb E[\sigma_\max(A)] \leq \sqrt{n} + \sqrt{p}$. For now, if we accept this, we have that
 $$
-\mathbb P \left(\left|\sigma_\max(A) - \mathbb E[\sigma_\max(A)]\right| > t \right) \leq 2 \exp \left\\{-\frac{t^2}{2}\right\\} \implies \mathbb P \left(\left|\frac{\sigma_\max(A)}{\sqrt{n}} - \frac{\mathbb E[\sigma_\max(A)]}{\sqrt{n}}\right| > t \right) \leq \mathbb P \left(\left|\frac{\sigma_\max(A)}{\sqrt{n}} - \left(1 + \sqrt{\frac{p}{n}}\right)\right| > \tilde t \right) \leq 2 \exp \left\\{-\frac{nt^2}{2}\right\\},
+\mathbb P \left(\left|\sigma_\max(A) - \mathbb E[\sigma_\max(A)]\right| > t \right) \leq 2 \exp \left\{-\frac{t^2}{2}\right\} \implies \mathbb P \left(\left|\frac{\sigma_\max(A)}{\sqrt{n}} - \frac{\mathbb E[\sigma_\max(A)]}{\sqrt{n}}\right| > t \right) \leq \mathbb P \left(\left|\frac{\sigma_\max(A)}{\sqrt{n}} - \left(1 + \sqrt{\frac{p}{n}}\right)\right| > \tilde t \right) \leq 2 \exp \left\{-\frac{nt^2}{2}\right\},
 $$
 where, in the last inequality, we have defined $\tilde t = \frac{t}{\sqrt{n}}$.
 

@@ -97,7 +97,7 @@ $$
 $$
 where
 $$
-I(a)=\sup_{t\in\mathbb R}\left\\{ta-\log\phi(t)\right\\}
+I(a)=\sup_{t\in\mathbb R}\left\{ta-\log\phi(t)\right\}
 $$
 is called the rate function.
 </div>
@@ -113,7 +113,7 @@ Inequality $(1)$ is Markov's inequality applied to the nonnegative random variab
 
 Since this holds for every $\theta>0$, we can optimize: we want the upper bound to be as small as posisble (to be tight as possible). Optimizing over $\theta$, we have
 $$
-\mathbb P(S_n\geq na) \leq \exp\left\\{-n\sup_{\theta>0}(\theta a-\log\phi(\theta))\right\\}.
+\mathbb P(S_n\geq na) \leq \exp\left\{-n\sup_{\theta>0}(\theta a-\log\phi(\theta))\right\}.
 $$
 It remains to show that the sup is equivalent for $\theta \in \mathbb R^+$ and $\theta \in \mathbb R$.
 
@@ -191,7 +191,7 @@ $$
 $$
 we can even think about the density: ignoring the square root factor and taking the derivative, we have that the density is (when ignoring the polynomial terms)
 $$
-f_{Z_n}(a) \sim I'(a) \cdot \exp \left\\{-nI(a)\right\\},
+f_{Z_n}(a) \sim I'(a) \cdot \exp \left\{-nI(a)\right\},
 $$
 so we get the same scaling.
 
@@ -213,7 +213,7 @@ This is the large deviation principle in heuristic form: the probability of an e
 
 We now make the previous heuristic more formal. This first statement will still be a rough one, meant to evoke a specific image and intuition, but ignoring technical details.
 
-A sequence of probability measures $\\{\mathbb P_n\\}$ satisfies a large deviation principle with rate function $I$ and rate $n$ if, roughly, for every event $A$, we have that
+A sequence of probability measures $\{\mathbb P_n\}$ satisfies a large deviation principle with rate function $I$ and rate $n$ if, roughly, for every event $A$, we have that
 $$
 \lim_{n\rightarrow\infty}\frac{1}{n}\log \mathbb P_n(A)=-\inf_{x\in A}I(x).
 $$
@@ -272,7 +272,7 @@ $$
 
 In particular, for a nice set $A$,
 $$
-\mathbb P(\bar X_n\in A)\approx \exp\left\\{-n\inf_{x\in A}I(x)\right\\},
+\mathbb P(\bar X_n\in A)\approx \exp\left\{-n\inf_{x\in A}I(x)\right\},
 $$
 from our previous heuristic calculations.
 
@@ -384,7 +384,7 @@ $$
 $$
 Suppose that $\Lambda(t)=\lim_{n\rightarrow\infty}\Lambda_n(t)$ exists and is differentiable. 
 
-Then $\\{\mathbb P_n\\}$ satisfies an LDP with rate $n$ and rate function
+Then $\{\mathbb P_n\}$ satisfies an LDP with rate $n$ and rate function
 $$
 I(z)=\sup_{t\in\mathbb R}\{tz-\Lambda(t)\}.
 $$
@@ -418,13 +418,13 @@ e^{-\frac{n}{2}(x-1)^2}+e^{-\frac{n}{2}(x+1)^2}.
 $$
 Therefore, the true rate function is
 $$
-I(x)=\min\left\\{\frac{1}{2}(x-1)^2,\frac{1}{2}(x+1)^2\right\\}.
+I(x)=\min\left\{\frac{1}{2}(x-1)^2,\frac{1}{2}(x+1)^2\right\}.
 $$
 This has two wells, one at $x=1$ and one at $x=-1$, and is not convex.
 
 Now compute the scaled log MGF. If $Y\sim \mathcal N(\mu,1/n)$, then
 $$
-\mathbb E[e^{ntY}]\overset{(1)}= \exp\left\\{nt\mu+\frac{1}{2}n^2t^2\cdot\frac{1}{n}\right\\}\overset{(2)}=e^{n(t\mu+t^2/2)}.
+\mathbb E[e^{ntY}]\overset{(1)}= \exp\left\{nt\mu+\frac{1}{2}n^2t^2\cdot\frac{1}{n}\right\}\overset{(2)}=e^{n(t\mu+t^2/2)}.
 $$
 Equality $(1)$ is the MGF formula for a Gaussian. Equality $(2)$ is simplifying the variance term.
 
@@ -444,11 +444,11 @@ This function is not differentiable at $t=0$.
 
 If we take the Legendre transform anyway, we get
 $$
-\Lambda^\*(x)=\sup\_{t\in\mathbb R}\{tx-\Lambda(t)\}.
+\Lambda^*(x)=\sup_{t\in\mathbb R}\{tx-\Lambda(t)\}.
 $$
 This produces the convexified rate
 $$
-\Lambda^\*(x)=\begin{cases}\frac{1}{2}(x-1)^2, & x>1,\\ 0, & -1\leq x\leq 1,\\ \frac{1}{2}(x+1)^2, & x<-1.\end{cases}
+\Lambda^*(x)=\begin{cases}\frac{1}{2}(x-1)^2, & x>1,\\ 0, & -1\leq x\leq 1,\\ \frac{1}{2}(x+1)^2, & x<-1.\end{cases}
 $$
 This differs from the true rate function.
 </div>
@@ -474,7 +474,7 @@ for every bounded continuous function $g\in C_b$.
 
 It turns out that the Vardhan-Bryc theorem is the analog of Portmanteau for LDP: Varadhan's theorem is one direction (forward), and Bryc's theorem is the other (backward).
 
-Suppose $X_n\sim \mathbb P_n$ and $\\{\mathbb P_n\\}$ satisfies an LDP with speed $n$ and rate function $I(x)$. If we look at
+Suppose $X_n\sim \mathbb P_n$ and $\{\mathbb P_n\}$ satisfies an LDP with speed $n$ and rate function $I(x)$. If we look at
 $$
 \mathbb E[g(X_n)]=\int g(x)d\mathbb P_n(x),
 $$
@@ -494,7 +494,7 @@ $$
 $$
 By Laplace's method, we should find what the part that dominates this integral: this should be where $F(x) - I(x)$ is maximized, i.e. $\sup_x F(x) - I(x)$, and we would obtain
 $$
-\int e^{n(F(x)-I(x))}dx \approx \exp\left\\{n\sup_x(F(x)-I(x))\right\\}.
+\int e^{n(F(x)-I(x))}dx \approx \exp\left\{n\sup_x(F(x)-I(x))\right\}.
 $$
 
 <div class="callout theorem"><span class="label">Theorem: Varadhan's Theorem</span><br/>
@@ -569,7 +569,7 @@ Y_n \triangleq T(X_n),
 $$
 let $\mathbb Q_n$ denote the distribution of $Y_n$.
 
-Assume that $\\{\mathbb P_n\\}$ satisfies an LDP with speed $n$ and rate function $I(x)$. We ask the following questions:
+Assume that $\{\mathbb P_n\}$ satisfies an LDP with speed $n$ and rate function $I(x)$. We ask the following questions:
 <ol type="1">
   <li>Does $\mathbb Q_n$ satisfy an LDP?</li>
   <li>If yes, what are the rate and the rate function of $\mathbb Q_n$?</li>

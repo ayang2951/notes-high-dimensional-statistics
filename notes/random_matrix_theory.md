@@ -144,14 +144,14 @@ $$&#9671;&#9672;&#9671;$$
 An interlude: a useful linear algebra result. For a matrix
 $$
 M = \begin{bmatrix}
-\ A & B \ \\\\
+\ A & B \ \\
 \ C & D \
 \end{bmatrix}
 $$
 and defining $S \triangleq D - CA^{-1} B$, the inverse of $M$ takes the form
 $$
 M^{-1} = \begin{bmatrix}
-\ A^{-1} + A^{-1} B S^{-1} C A^{-1} & -A^{-1} B S^{-1} \ \\\\
+\ A^{-1} + A^{-1} B S^{-1} C A^{-1} & -A^{-1} B S^{-1} \ \\
 \ -S^{-1} CA^{-1} & S^{-1} \
 \end{bmatrix}
 $$
@@ -165,29 +165,29 @@ $$&#9671;&#9672;&#9671;$$
 Returning to our matrix of interest and defining $x_1$ as the first column of $X$ and $X_{-1}$ to be the remaining $p - 1$ columns, we write it in the block form, isolating the first component:
 $$
 X^\top X - z \cdot \mathbf I_p = \begin{bmatrix}
-\ x_1^\top x_1 - z & x_1^\top X_{-1} \ \\\\
+\ x_1^\top x_1 - z & x_1^\top X_{-1} \ \\
 \ X_{-1}^\top x_1 & X_{-1}^\top X_{-1} - z \cdot \mathbf I_{p - 1} \ \
 \end{bmatrix}.
 $$
 Utilizing the result above about the block inversion, we have that
 $$
-(X^\top X - z \cdot \mathbf I_p)^{-1}\_{11} = \bigg((x_1^\top x_1 - z) - x_1^\top X_{-1}(X_{-1}^\top X_{-1} - z \cdot \mathbf I_{p - 1})^{-1} X_{-1}^\top x_1\bigg)^{-1}.
+(X^\top X - z \cdot \mathbf I_p)^{-1}_{11} = \bigg((x_1^\top x_1 - z) - x_1^\top X_{-1}(X_{-1}^\top X_{-1} - z \cdot \mathbf I_{p - 1})^{-1} X_{-1}^\top x_1\bigg)^{-1}.
 $$
 On this quantity, we can either apply concentration directly, or we can attempt to simplify it via linear algebra first. If we choose to do the latter (which is probably nicer), we can use the push-through identity, which gives us $-x_1^\top X_{-1} (X_{-1}^\top X_{-1} - z \cdot \mathbf I_{p - 1})^{-1}X_{-1}^\top x = x_1^\top x_1 + z \cdot x_1^\top (X_{-1} X_{-1}^\top - z \cdot \mathbf I_{n})^{-1} x_1$, and hence obtain
 $$
-(X^\top X - z \cdot \mathbf I_p)^{-1}\_{11} = (-z - z x_1^\top (X_{-1} X_{-1}^\top - z \cdot \mathbf I_{p - 1})^{-1} x_1).
+(X^\top X - z \cdot \mathbf I_p)^{-1}_{11} = (-z - z x_1^\top (X_{-1} X_{-1}^\top - z \cdot \mathbf I_{p - 1})^{-1} x_1).
 $$
 Observe the term $x_1^\top (X_{-1}X_{-1}^\top - z \cdot \mathbf I)^{-1} x_1$. Because $x_1$ and $X_{-1}$ are independent, we have
 $$
-x_1^\top (X_{-1}X_{-1}^\top - z \cdot \mathbf I)^{-1} x_1 = \sum_{i = 1}^n (X_{-1} X_{-1}^\top - z \cdot \mathbf I)^{-1}\_{ii} \cdot x_i^2 + \sum_{i \neq j} (X_{-1} X_{-1}^\top - z \cdot \mathbf I)^{-1}\_{ij} \cdot x_i \cdot x_j
+x_1^\top (X_{-1}X_{-1}^\top - z \cdot \mathbf I)^{-1} x_1 = \sum_{i = 1}^n (X_{-1} X_{-1}^\top - z \cdot \mathbf I)^{-1}_{ii} \cdot x_i^2 + \sum_{i \neq j} (X_{-1} X_{-1}^\top - z \cdot \mathbf I)^{-1}_{ij} \cdot x_i \cdot x_j
 $$
 Here, we can develop some heuristics for the resultant quantity, $\frac{1}{n} \text{Tr}(X_{-1} X_{-1}^\top - z \cdot \mathbf I)^{-1}$. We see that, in the limit, the quantity $(X_{-1} X_{-1}^\top - z \cdot \mathbf I) $ shouldn't be very different than $(XX^\top - z\cdot \mathbf I)$, and specifically, the trace is missing only one eigenvalue. Hence, it's reasonable to expect that $\text{Tr}(X_{-1} X_{-1}^\top - z \cdot \mathbf I)^{-1} \approx \text{Tr}(X X^\top - z \cdot \mathbf I)^{-1}$. If this is true, then we can expect that
 $$
-(X^\top X - z \cdot \mathbf I)\_{11}^{-1} = (-z -z x_1^\top (X_{-1} X_{-1}^\top - z \cdot \mathbf I)^{-1} x_1)^{-1} \approx (-z - \frac{z}{n} \text{Tr}(X_{-1} X_{-1}^\top - z \cdot \mathbf I)^{-1}) \approx (-z - \frac{z}{n} \text{Tr}(X X^\top - z \cdot \mathbf I)^{-1}).
+(X^\top X - z \cdot \mathbf I)_{11}^{-1} = (-z -z x_1^\top (X_{-1} X_{-1}^\top - z \cdot \mathbf I)^{-1} x_1)^{-1} \approx (-z - \frac{z}{n} \text{Tr}(X_{-1} X_{-1}^\top - z \cdot \mathbf I)^{-1}) \approx (-z - \frac{z}{n} \text{Tr}(X X^\top - z \cdot \mathbf I)^{-1}).
 $$
 What does this give us? Notice that when we apply our heuristic argument, the first element doesn't depend on any specific column! Hence, we should be able to say that 
 $$
-(X^\top X - z \cdot \mathbf I)\_{11}^{-1} \approx (X^\top X - z \cdot \mathbf I)\_{22}^{-1} \ldots \approx (X^\top X - z \cdot \mathbf I)\_{pp}^{-1}
+(X^\top X - z \cdot \mathbf I)_{11}^{-1} \approx (X^\top X - z \cdot \mathbf I)_{22}^{-1} \ldots \approx (X^\top X - z \cdot \mathbf I)_{pp}^{-1}
 $$
 and jump directly from a calculation on the first element of the diagonal to the entire trace. 
 

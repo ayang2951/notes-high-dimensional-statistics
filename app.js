@@ -1,6 +1,4 @@
-/* app.js – with max-height collapsibles + auto-numbering */
-
-marked.setOptions({ gfm:true, mangle:false, headerIds:false });
+"use strict";
 
 const ORDERED_NOTES = [
   { file: "high_dim_stats.md", title: "High Dimensional Statistics" },
@@ -12,301 +10,544 @@ const ORDERED_NOTES = [
   { file: "replica_method.md", title: "Replica Method" }
 ];
 
-function $id(id){ return document.getElementById(id); }
-const contentEl = () => $id('content');
-const tocEl = () => $id('toc');
+const CALLOUT_TYPES = [
+  "definition",
+  "proposition",
+  "lemma",
+  "theorem",
+  "remark",
+  "corollary",
+  "example"
+];
 
-async function loadAll(){
-  const parts = await Promise.all(ORDERED_NOTES.map(async({file,title},i)=>{
-    try {
-      const res = await fetch(`notes/${file}`);
-      if(!res.ok) return `<section data-sec="${i+1}"><h1>${title}</h1><blockquote>⚠️ Missing ${file}</blockquote></section>`;
-      const md = await res.text();
-      const html = marked.parse(md);
-      return `<section id="sec-${i+1}" class="note-section" data-sec="${i+1}"><h1>${title}</h1>${html}</section>`;
-    } catch(e){
-      return `<section data-sec="${i+1}"><h1>${title}</h1><blockquote>⚠️ Load error</blockquote></section>`;
+const storagePrefix = window.COURSE_NOTES_STORAGE_PREFIX ||
+  `course-notes:${window.location.pathname.replace(/\/index\.html$/, "/")}:`;
+let bookmarkMemory = null;
+
+function byId(id) {
+  return document.getElementById(id);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function escapeMathHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+const escapedDollarExtension = {
+  name: "escapedDollar",
+  level: "inline",
+  start(source) {
+    const index = source.indexOf("\\$");
+    return index < 0 ? undefined : index;
+  },
+  tokenizer(source) {
+    const match = /^\\\$/.exec(source);
+    if (!match) return undefined;
+
+    return {
+      type: "escapedDollar",
+      raw: match[0]
+    };
+  },
+  renderer() {
+    return '<span class="tex2jax_ignore">$</span>';
+  }
+};
+
+const displayMathExtension = {
+  name: "displayMath",
+  level: "block",
+  start(source) {
+    const match = /(^|\n)\$\$(?!\$)/.exec(source);
+    if (!match) return undefined;
+    return match.index + (match[1] ? 1 : 0);
+  },
+  tokenizer(source) {
+    const match = /^\$\$[ \t]*\n([\s\S]*?)\n\$\$[ \t]*(?:\n|$)/.exec(source);
+    if (!match || !match[1].trim()) return undefined;
+
+    return {
+      type: "displayMath",
+      raw: match[0],
+      text: match[1].trim()
+    };
+  },
+  renderer(token) {
+    return `\\[\n${escapeMathHtml(token.text)}\n\\]\n`;
+  }
+};
+
+const inlineMathExtension = {
+  name: "inlineMath",
+  level: "inline",
+  start(source) {
+    const index = source.search(/\$(?!\$)/);
+    return index < 0 ? undefined : index;
+  },
+  tokenizer(source) {
+    const match = /^\$(?!\$|\s)((?:\\.|[^\\$\n])+?)\$(?!\$)/.exec(source);
+    if (!match || /\s$/.test(match[1])) return undefined;
+
+    return {
+      type: "inlineMath",
+      raw: match[0],
+      text: match[1]
+    };
+  },
+  renderer(token) {
+    return `\\(${escapeMathHtml(token.text)}\\)`;
+  }
+};
+
+function configureMarkdown() {
+  if (!window.marked?.use || !window.marked?.parse) {
+    throw new Error("The Markdown renderer did not load.");
+  }
+
+  window.marked.use({
+    gfm: true,
+    breaks: false,
+    extensions: [
+      escapedDollarExtension,
+      displayMathExtension,
+      inlineMathExtension
+    ]
+  });
+}
+
+function renderMarkdown(markdown) {
+  return window.marked.parse(markdown);
+}
+
+function sectionMarkup(note, index, body) {
+  const sectionNumber = index + 1;
+  return [
+    `<section id="sec-${sectionNumber}" class="note-section" data-sec="${sectionNumber}" data-file="${escapeHtml(note.file)}">`,
+    `<h1>${escapeHtml(note.title)}</h1>`,
+    body,
+    "</section>"
+  ].join("");
+}
+
+async function loadNote(note, index) {
+  try {
+    const notePath = note.file.split("/").map(encodeURIComponent).join("/");
+    const response = await fetch(`notes/${notePath}`);
+    if (!response.ok) {
+      return sectionMarkup(
+        note,
+        index,
+        `<blockquote class="load-error">⚠️ Could not load ${escapeHtml(note.file)}.</blockquote>`
+      );
     }
-  }));
-  contentEl().innerHTML = parts.join("\n");
 
-  if(window.MathJax?.typesetPromise){ await MathJax.typesetPromise([contentEl()]); }
+    return sectionMarkup(note, index, renderMarkdown(await response.text()));
+  } catch (error) {
+    return sectionMarkup(
+      note,
+      index,
+      `<blockquote class="load-error">⚠️ Could not load ${escapeHtml(note.file)}.</blockquote>`
+    );
+  }
+}
 
-  removeEmptyPlaceholders();
+async function loadAll() {
+  const content = byId("content");
+  const parts = await Promise.all(ORDERED_NOTES.map(loadNote));
+  content.innerHTML = parts.join("\n");
+
   buildToc();
   autoNumberCallouts();
   addBookmarkButtons();
-}
 
-function removeEmptyPlaceholders() {
-  // Remove empty paragraph/div/mjx nodes that only contain whitespace or no children
-  const nodes = document.querySelectorAll('#content p, #content div, #content .MathJax_Display, #content mjx-container, #content .MathJax');
-  nodes.forEach(el => {
-    const hasVisibleChild = Array.from(el.children).some(c => {
-      // keep if there's an image/svg/math element or non-empty element
-      return (c.tagName === 'IMG' || c.tagName === 'SVG' || c.querySelector('*')) || c.textContent.trim() !== '';
-    });
-    const text = el.textContent || '';
-    if (!hasVisibleChild && text.trim() === '') {
-      el.remove();
+  if (window.MathJax?.typesetPromise) {
+    try {
+      await window.MathJax.typesetPromise([content]);
+    } catch (error) {
+      console.error("MathJax could not typeset the notes.", error);
     }
-  });
-}
-
-
-function buildToc(){
-  const secs = Array.from(document.querySelectorAll('.note-section > h1'));
-  tocEl().innerHTML = `<div class="toc-list">${secs.map(h=>`<a href="#${h.parentElement.id}">${h.textContent}</a>`).join('')}</div>`;
-}
-
-/* Auto-number callouts with colon */
-/* Replace existing autoNumberCallouts() with this block */
-function autoNumberCallouts(){
-  document.querySelectorAll('.note-section').forEach(sec=>{
-    const secIdx = sec.dataset.sec || (sec.id||'').replace(/^[^\d]*(\d+).*$/,'$1') || '0';
-    const counters = {definition:0, proposition:0, lemma:0, theorem:0, remark:0, corollary:0, example:0};
-
-    sec.querySelectorAll('.callout').forEach(c=>{
-      for(const t in counters){
-        if(c.classList.contains(t)){
-          counters[t]++;
-          const num = `${secIdx}.${counters[t]}`;
-          const labelEl = c.querySelector('.label');
-          if(labelEl){
-            let raw = labelEl.textContent.trim();
-            const afterType = raw.replace(/^[A-Za-z]+\s*[:(]?\s*/,'').trim();
-            const titlePart = afterType ? `: ${afterType}` : '';
-            const typeWord = t.charAt(0).toUpperCase() + t.slice(1);
-
-            labelEl.innerHTML =
-              '<span class="callout-type">' + typeWord + '</span> ' +
-              '<span class="callout-num">' + num + '</span>' +
-              '<span class="callout-title">' + titlePart + '</span>';
-          }
-          
-          if (!c.id) c.id = `${t}-${secIdx}-${counters[t]}`;
-          break;
-        }
-      }
-    });
-  });
-}
-
-
-/* Theme toggle */
-function getTheme(){ return document.documentElement.getAttribute('data-theme')||'light'; }
-function setTheme(t,b){ document.documentElement.setAttribute('data-theme',t); localStorage.setItem('theme',t); if(b){ b.textContent=(t==='dark'?'🌙':'☀️'); b.setAttribute('aria-pressed',t==='dark'); } }
-
-document.addEventListener('DOMContentLoaded',()=>{
-  const btn=$id('themeToggle');
-  if(btn){ setTheme(getTheme(),btn); btn.addEventListener('click',()=>setTheme(getTheme()==='dark'?'light':'dark',btn)); }
-  loadAll();
-});
-
-/* ----- Bookmark helpers (replace old versions) ----- */
-
-function getTextExcluding(el, selectorToExclude = '.bookmark-btn') {
-  const clone = el.cloneNode(true);
-  clone.querySelectorAll(selectorToExclude).forEach(n => n.remove());
-  return clone.textContent.trim().replace(/\s+/g, ' ');
-}
-
-function findNearestHeading(el) {
-  let prev = el.previousElementSibling;
-  while (prev) {
-    if (['H1','H2','H3'].includes(prev.tagName)) return prev;
-    prev = prev.previousElementSibling;
   }
-  const sec = el.closest('section');
-  if (sec) return sec.querySelector('h1');
-  return null;
 }
 
-function addBookmarkButtons() {
-  // clear any old ones
-  document.querySelectorAll('.bookmark-btn').forEach(b => b.remove());
+function buildToc() {
+  const toc = byId("toc");
+  const content = byId("content");
+  const list = document.createElement("div");
+  list.className = "toc-list";
 
-  const blocks = document.querySelectorAll('.callout, p');
-  blocks.forEach((el, idx) => {
-    if (!el.id) el.id = `bookmarkable-${idx}`;
-
-    let container = el;
-    if (el.classList.contains('callout')) {
-      const label = el.querySelector('.label');
-      if (label) container = label;
-    }
-
-    container.dataset.plain = getTextExcluding(container, '.bookmark-btn');
-    if (container.querySelector('.bookmark-btn')) return;
-
-    const btn = document.createElement('button');
-    btn.className = 'bookmark-btn';
-    btn.type = 'button';
-    btn.title = 'Toggle bookmark';
-    btn.setAttribute('aria-label', 'Toggle bookmark');
-    btn.textContent = '🔖';
-
-    btn.addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      toggleBookmark(el.id);
-    });
-
-    container.appendChild(btn);
+  content.querySelectorAll(".note-section > h1").forEach((heading) => {
+    const link = document.createElement("a");
+    link.href = `#${heading.parentElement.id}`;
+    link.textContent = heading.textContent;
+    list.appendChild(link);
   });
 
-  renderBookmarks();
+  toc.replaceChildren(list);
+}
+
+function stripCalloutType(label, type) {
+  const walker = document.createTreeWalker(label, NodeFilter.SHOW_TEXT);
+  const pattern = new RegExp(`^\\s*${type}\\s*:?[ \\t]*`, "i");
+  let node = walker.nextNode();
+
+  while (node) {
+    if (node.textContent.trim()) {
+      node.textContent = node.textContent.replace(pattern, "");
+      break;
+    }
+    node = walker.nextNode();
+  }
+
+  while (label.firstChild?.nodeType === Node.TEXT_NODE && !label.firstChild.textContent.trim()) {
+    label.firstChild.remove();
+  }
+}
+
+function autoNumberCallouts() {
+  byId("content").querySelectorAll(".note-section").forEach((section) => {
+    const sectionNumber = section.dataset.sec || "0";
+    const counters = Object.fromEntries(CALLOUT_TYPES.map((type) => [type, 0]));
+
+    section.querySelectorAll(".callout").forEach((callout) => {
+      const type = CALLOUT_TYPES.find((candidate) => callout.classList.contains(candidate));
+      if (!type) return;
+
+      counters[type] += 1;
+      const number = `${sectionNumber}.${counters[type]}`;
+      if (!callout.id) callout.id = `${type}-${sectionNumber}-${counters[type]}`;
+
+      const label = callout.querySelector(":scope > .label");
+      if (!label || label.dataset.numbered === "true") return;
+
+      const title = label.cloneNode(true);
+      title.querySelectorAll(".bookmark-btn").forEach((button) => button.remove());
+      stripCalloutType(title, type);
+
+      const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
+      const typeSpan = document.createElement("span");
+      typeSpan.className = "callout-type";
+      typeSpan.textContent = typeLabel;
+
+      const numberSpan = document.createElement("span");
+      numberSpan.className = "callout-num";
+      numberSpan.textContent = number;
+
+      label.replaceChildren(typeSpan, " ", numberSpan);
+
+      if (title.textContent.trim() || title.querySelector("*")) {
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "callout-title";
+        titleSpan.append(": ");
+        while (title.firstChild) titleSpan.appendChild(title.firstChild);
+        label.appendChild(titleSpan);
+      }
+
+      label.dataset.numbered = "true";
+    });
+  });
+}
+
+function safeRead(key) {
+  try {
+    return localStorage.getItem(`${storagePrefix}${key}`);
+  } catch (error) {
+    return null;
+  }
+}
+
+function safeWrite(key, value) {
+  try {
+    localStorage.setItem(`${storagePrefix}${key}`, value);
+  } catch (error) {
+    // The site still works when storage is disabled.
+  }
+}
+
+function getTheme() {
+  return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+}
+
+function applyTheme(theme, button, persist = false) {
+  const nextTheme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = nextTheme;
+
+  if (persist) safeWrite("theme", nextTheme);
+  if (!button) return;
+
+  const isDark = nextTheme === "dark";
+  button.textContent = isDark ? "🌙" : "☀️";
+  button.setAttribute("aria-pressed", String(isDark));
+  button.setAttribute("aria-label", `Switch to ${isDark ? "light" : "dark"} mode`);
+  button.title = `Switch to ${isDark ? "light" : "dark"} mode`;
+}
+
+function setupTheme() {
+  const button = byId("themeToggle");
+  if (!button) return;
+
+  applyTheme(getTheme(), button);
+  button.addEventListener("click", () => {
+    applyTheme(getTheme() === "dark" ? "light" : "dark", button, true);
+  });
+}
+
+function normalizeText(element, selectorToExclude = ".bookmark-btn") {
+  const clone = element.cloneNode(true);
+  clone.querySelectorAll(selectorToExclude).forEach((node) => node.remove());
+  return clone.textContent.trim().replace(/\s+/g, " ");
+}
+
+function textHash(value) {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function stableBookmarkId(element) {
+  const section = element.closest(".note-section");
+  const file = section?.dataset.file || "notes";
+  const base = `bookmark-${file.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase()}-${textHash(normalizeText(element))}`;
+  let id = base;
+  let suffix = 2;
+
+  while (document.getElementById(id)) {
+    id = `${base}-${suffix}`;
+    suffix += 1;
+  }
+  return id;
 }
 
 function getBookmarks() {
-  try {
-    return JSON.parse(localStorage.getItem('bookmarks') || '[]');
-  } catch {
+  if (bookmarkMemory !== null) return [...bookmarkMemory];
+
+  const raw = safeRead("bookmarks");
+  if (!raw) {
+    bookmarkMemory = [];
     return [];
   }
+
+  try {
+    const parsed = JSON.parse(raw);
+    bookmarkMemory = Array.isArray(parsed)
+      ? [...new Set(parsed.filter((id) => typeof id === "string"))]
+      : [];
+  } catch (error) {
+    bookmarkMemory = [];
+  }
+  return [...bookmarkMemory];
 }
-function saveBookmarks(arr) {
-  localStorage.setItem('bookmarks', JSON.stringify(arr));
+
+function saveBookmarks(bookmarks) {
+  bookmarkMemory = [...new Set(bookmarks)];
+  safeWrite("bookmarks", JSON.stringify(bookmarkMemory));
 }
+
 function toggleBookmark(id) {
-  const arr = getBookmarks();
-  const i = arr.indexOf(id);
-  if (i >= 0) arr.splice(i, 1);
-  else arr.push(id);
-  saveBookmarks(arr);
+  const bookmarks = getBookmarks();
+  const index = bookmarks.indexOf(id);
+  if (index >= 0) bookmarks.splice(index, 1);
+  else bookmarks.push(id);
+  saveBookmarks(bookmarks);
   renderBookmarks();
 }
+
 function removeBookmark(id) {
-  const arr = getBookmarks().filter(x => x !== id);
-  saveBookmarks(arr);
+  saveBookmarks(getBookmarks().filter((bookmark) => bookmark !== id));
   renderBookmarks();
+}
+
+function addBookmarkButtons() {
+  document.querySelectorAll("#content .bookmark-btn").forEach((button) => button.remove());
+
+  const blocks = Array.from(document.querySelectorAll("#content .callout, #content p"))
+    .filter((element) => element.classList.contains("callout") || !element.closest(".callout"));
+
+  blocks.forEach((element) => {
+    element.classList.add("bookmarkable");
+    if (!element.id) element.id = stableBookmarkId(element);
+
+    const container = element.classList.contains("callout")
+      ? element.querySelector(":scope > .label") || element
+      : element;
+    const plainText = normalizeText(container);
+    element.dataset.plain = plainText;
+    container.dataset.plain = plainText;
+
+    const button = document.createElement("button");
+    button.className = "bookmark-btn";
+    button.type = "button";
+    button.title = "Toggle bookmark";
+    button.setAttribute("aria-label", "Toggle bookmark");
+    button.setAttribute("aria-pressed", "false");
+    button.textContent = "🔖";
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleBookmark(element.id);
+    });
+    container.appendChild(button);
+  });
+
+  renderBookmarks();
+}
+
+function findNearestHeading(element) {
+  const section = element.closest(".note-section");
+  if (!section) return null;
+
+  let nearest = null;
+  section.querySelectorAll("h1, h2, h3").forEach((heading) => {
+    if (heading === element || heading.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING) {
+      nearest = heading;
+    }
+  });
+  return nearest;
+}
+
+function headingNumber(heading, counters) {
+  if (heading.tagName === "H1") {
+    counters.h1 += 1;
+    counters.h2 = 0;
+    counters.h3 = 0;
+    return `${counters.h1}. `;
+  }
+  if (heading.tagName === "H2") {
+    counters.h2 += 1;
+    counters.h3 = 0;
+    return `${counters.h1}.${counters.h2} `;
+  }
+
+  counters.h3 += 1;
+  return `${counters.h1}.${counters.h2}.${counters.h3} `;
 }
 
 function renderBookmarks() {
-  const bookmarks = getBookmarks();
-  const panelList = document.getElementById('bookmarkList');
+  const panelList = byId("bookmarkList");
   if (!panelList) return;
 
-  // reset counters every render
-  let h1Count = 0;
-  let h2Count = 0;
-  let h3Count = 0;
+  const stored = getBookmarks();
+  const content = byId("content");
+  const bookmarks = stored.filter((id) => {
+    const element = byId(id);
+    return element && content.contains(element) && element.classList.contains("bookmarkable");
+  });
+  if (bookmarks.length !== stored.length) saveBookmarks(bookmarks);
 
-
-  panelList.innerHTML = '';
-
-  document.querySelectorAll('.bookmarkable, .callout').forEach(el => {
-    el.classList.toggle('bookmarked', bookmarks.includes(el.id));
+  document.querySelectorAll("#content .bookmarkable").forEach((element) => {
+    const isBookmarked = bookmarks.includes(element.id);
+    element.classList.toggle("bookmarked", isBookmarked);
+    element.querySelector(":scope > .bookmark-btn, :scope > .label > .bookmark-btn")
+      ?.setAttribute("aria-pressed", String(isBookmarked));
   });
 
-  let headings = Array.from(document.querySelectorAll('h1, h2, h3'))
-  .filter(h => !h.closest('#bookmarkPanel'));
-
-
-  // drop the very first h1 (the document title)
-  if (headings.length && headings[0].tagName === 'H1') {
-    headings = headings.slice(1);
-  }
-
-  const map = new Map();
-  headings.forEach(h => map.set(h, []));
-
-  bookmarks.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const nearest = findNearestHeading(el);
-    const headingKey = nearest || headings[0] || null;
-    if (headingKey) {
-      if (!map.has(headingKey)) map.set(headingKey, []);
-      map.get(headingKey).push(el);
-    }
+  const headings = Array.from(document.querySelectorAll("#content h1, #content h2, #content h3"));
+  headings.forEach((heading) => {
+    if (!heading.dataset.plain) heading.dataset.plain = normalizeText(heading);
+  });
+  const bookmarksByHeading = new Map(headings.map((heading) => [heading, []]));
+  bookmarks.forEach((id) => {
+    const element = byId(id);
+    const heading = findNearestHeading(element) || headings[0];
+    if (!heading) return;
+    if (!bookmarksByHeading.has(heading)) bookmarksByHeading.set(heading, []);
+    bookmarksByHeading.get(heading).push(element);
   });
 
-  headings.forEach(h => {
-    const li = document.createElement('li');
-    li.className = `heading-item level-${parseInt(h.tagName.slice(1), 10)}`;
+  const counters = { h1: 0, h2: 0, h3: 0 };
+  const fragment = document.createDocumentFragment();
 
-    const headingText = (h.dataset && h.dataset.plain)
-      ? h.dataset.plain
-      : getTextExcluding(h, '.bookmark-btn');
+  headings.forEach((heading) => {
+    const item = document.createElement("li");
+    item.className = `heading-item level-${heading.tagName.slice(1)}`;
 
-    // compute hierarchical numbering
-    let numberLabel = '';
-    if (h.tagName === 'H1') {
-      h1Count++;
-      h2Count = 0;
-      h3Count = 0;
-      numberLabel = h1Count + '. ';
-    }
-    else if (h.tagName === 'H2') {
-      h2Count++;
-      h3Count = 0;
-      numberLabel = h1Count + '.' + h2Count + ' ';
-    }
-    else if (h.tagName === 'H3') {
-      h3Count++;
-      numberLabel = h1Count + '.' + h2Count + '.' + h3Count + ' ';
-    }
+    const title = document.createElement("strong");
+    title.textContent = `${headingNumber(heading, counters)}${heading.dataset.plain || "(Untitled)"}`;
+    item.appendChild(title);
 
-
-    const strong = document.createElement('strong');
-    strong.textContent = numberLabel + (headingText || '(Untitled)');
-    li.appendChild(strong);
-
-
-    const childBookmarks = map.get(h) || [];
+    const childBookmarks = bookmarksByHeading.get(heading) || [];
     if (childBookmarks.length) {
-      const ul = document.createElement('ul');
-      ul.className = 'heading-bookmark-list';
-      childBookmarks.forEach(bookEl => {
-        const subli = document.createElement('li');
-        subli.className = 'bookmark-item';
+      const list = document.createElement("ul");
+      list.className = "heading-bookmark-list";
 
-        const a = document.createElement('a');
-        a.href = '#' + bookEl.id;
+      childBookmarks.forEach((bookmarkedElement) => {
+        const bookmarkItem = document.createElement("li");
+        bookmarkItem.className = "bookmark-item";
 
-        if (bookEl.classList.contains('callout')) {
-          const lab = bookEl.querySelector('.label');
-          a.textContent = lab
-            ? (lab.dataset && lab.dataset.plain ? lab.dataset.plain : getTextExcluding(lab, '.bookmark-btn'))
-            : (bookEl.dataset.plain || bookEl.textContent.slice(0, 50));
-        } else {
-          a.textContent = bookEl.dataset && bookEl.dataset.plain
-            ? bookEl.dataset.plain
-            : getTextExcluding(bookEl, '.bookmark-btn');
-        }
-
-        a.addEventListener('click', (ev) => {
-          ev.preventDefault();
-          bookEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const link = document.createElement("a");
+        link.href = `#${bookmarkedElement.id}`;
+        link.textContent = bookmarkedElement.dataset.plain || normalizeText(bookmarkedElement);
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          bookmarkedElement.scrollIntoView({ behavior: "smooth", block: "start" });
         });
 
-        const rm = document.createElement('button');
-        rm.type = 'button';
-        rm.className = 'bookmark-remove';
-        rm.title = 'Remove bookmark';
-        rm.textContent = '🔖';
-        rm.addEventListener('click', () => removeBookmark(bookEl.id));
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "bookmark-remove";
+        removeButton.title = "Remove bookmark";
+        removeButton.setAttribute("aria-label", "Remove bookmark");
+        removeButton.textContent = "🔖";
+        removeButton.addEventListener("click", () => removeBookmark(bookmarkedElement.id));
 
-        subli.appendChild(a);
-        subli.appendChild(rm);
-        ul.appendChild(subli);
+        bookmarkItem.append(link, removeButton);
+        list.appendChild(bookmarkItem);
       });
-      li.appendChild(ul);
+
+      item.appendChild(list);
     }
 
-    panelList.appendChild(li);
+    fragment.appendChild(item);
+  });
+
+  panelList.replaceChildren(fragment);
+}
+
+function setBookmarkPanelOpen(open) {
+  const button = byId("toggleBookmarks");
+  const panel = byId("bookmarkPanel");
+  if (!button || !panel) return;
+
+  panel.hidden = !open;
+  button.setAttribute("aria-expanded", String(open));
+  button.setAttribute("aria-label", `${open ? "Hide" : "Show"} bookmarks`);
+  button.title = `${open ? "Hide" : "Show"} bookmarks`;
+}
+
+function setupBookmarkPanel() {
+  const button = byId("toggleBookmarks");
+  if (!button) return;
+
+  button.addEventListener("click", () => {
+    setBookmarkPanelOpen(button.getAttribute("aria-expanded") !== "true");
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setBookmarkPanelOpen(false);
   });
 }
 
+document.addEventListener("DOMContentLoaded", async () => {
+  setupTheme();
+  setupBookmarkPanel();
 
-
-/* --- Panel toggle --- */
-document.addEventListener('DOMContentLoaded', () => {
-  const toggleBtn = document.getElementById('toggleBookmarks');
-  const panel = document.getElementById('bookmarkPanel');
-  if(toggleBtn && panel){
-    toggleBtn.addEventListener('click', () => {
-      panel.style.display = (panel.style.display === 'block' ? 'none' : 'block');
-    });
+  try {
+    configureMarkdown();
+    await loadAll();
+  } catch (error) {
+    console.error(error);
+    byId("content").innerHTML = '<blockquote class="load-error">⚠️ The notes could not be rendered. Reload the page or check the browser console.</blockquote>';
   }
 });
