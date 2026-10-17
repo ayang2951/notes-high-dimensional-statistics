@@ -29,8 +29,8 @@ This is a large deviation, decaying to 0 instead of converging to something posi
 
 For more complicated functions than the sample sum, we might want to understand this decay: knowing that it converges to 0 is not enough; we want to know the rate at which is does. Large deviation theory was developed precisely to address this: providing more accurate asymptotics for scalings larger than the CLT.
 
-<div class="callout remark"><span class="label">Remark: Concentration vs. Large Deviations</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout remark">
+<div class="label">Remark: Concentration vs. Large Deviations</div>
 Concentration of measure and large deviation theory both study tail probabilities, but they have slightly different goals. Concentration usually gives finite-sample upper bounds, often of the form
 $$
 \mathbb P(\text{bad event})\leq e^{-cn}.
@@ -45,8 +45,8 @@ So it's important to keep in mind that large deviation results are asymptotic .
 Let's now look at our favorite example: iid Gaussian random variables. This is a good first place to look, since the Gaussian tails are well-studied.
 
 
-<div class="callout example"><span class="label">Example: Gaussian Large Deviation</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Gaussian Large Deviation</div>
 Let $X_1,X_2,\ldots,X_n\overset{iid}\sim \mathcal N(0,1)$. Then $S_n=\sum_{i=1}^n X_i\sim \mathcal N(0,n)$. Therefore, we have for the probability that the sum deviates from its mean for a large devitation is
 $$
 \mathbb P(S_n>nt) = \mathbb P(\sqrt n Z>nt) = \mathbb P(Z>\sqrt n t), \qquad Z\sim\mathcal N(0,1).
@@ -78,8 +78,8 @@ Similarly, we can prove more complicated and flexible large deviation results, a
 
 A first basic building block of large deviation, before we get to more complicated functions, is Cramér's theorem: a result that gives us the large deviation rate of convergence for sums of iid random variables.
 
-<div class="callout theorem"><span class="label">Theorem: Cramer's Theorem</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Cramer's Theorem</div>
 
 Let $ X_1,\ldots,X_n $
 be iid random variables satisfying
@@ -171,8 +171,8 @@ where the scaling $\frac{1}{n}$ and $n$ in the probability are called the <i><st
 
 
 
-<div class="callout remark"><span class="label">Remark: Log MGF Notation</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout remark">
+<div class="label">Remark: Log MGF Notation</div>
 It is common to define the log moment generating function
 $$
 \Lambda(t)\triangleq \log\phi(t)=\log\mathbb E[e^{tX_1}].
@@ -219,8 +219,8 @@ $$
 $$
 There's still a technical issue here: we need to be careful with discontinuity points and boundaries. Convergence in distribution does not imply that $\mathbb P_n(A) \rightarrow \mathbb P(A)$ because of discontinuity points. Hence, we need to discuss upper and lower bounds with open and closed sets of A.
 
-<div class="callout definition"><span class="label">Definition: Large Deviation Principle</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout definition">
+<div class="label">Definition: Large Deviation Principle</div>
 Let $\{\mathbb P_n\}$ be a sequence of probability measures on a space $\mathcal X$. We say that $\{\mathbb P_n\}$ satisfies the <i><strong>large deviation principle</strong></i> with speed $n$ and rate function $I:\mathcal X\rightarrow[0,\infty]$ if:
 
 $$
@@ -257,8 +257,8 @@ The lower bound is stated for open sets because, to prove that an event has at l
 
 With our formal large deviation principle statement, we can rewrite Cramér's theorem in the following way. 
 
-<div class="callout theorem"><span class="label">Theorem: Cramér's Theorem, Large Deviation Principle</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Cramér's Theorem, Large Deviation Principle</div>
 Let $X_1,X_2,\ldots$ be iid random variables with $\mathbb E[X_1]=0$
 and moment generating function $\phi(t)=\mathbb E[e^{tX_1}]$, where $\phi(t)<\infty$. Then the distribution of
 $$
@@ -376,8 +376,8 @@ We remark that the right hand side here is another Legendre transform, this time
 
 With the understanding of what scaling the MGF needs in order to be "visible" in the end result, we introduce the quintessential MGF result on large deviation; the analog of the method of moments, called the Gärtner-Ellis theorem.
 
-<div class="callout theorem"><span class="label">Theorem: Gärtner-Ellis Theorem</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Gärtner-Ellis Theorem</div>
 Let $\{\mathbb P_n\}$ be a sequence of probability measures, and let $\phi_n(t)\triangleq \mathbb E[e^{ntZ_n}]$. Additionally, define the scaled log of the MGF as
 $$
 \Lambda_n(t)\triangleq \frac{1}{n}\log\phi_n(t)=\frac{1}{n}\log\mathbb E[e^{ntZ_n}].
@@ -391,8 +391,8 @@ $$
 This result is known as the <i><strong>Gärtner-Ellis</strong></i> theorem.
 </div>
 
-<div class="callout remark"><span class="label">Remark: Be Careful About the Conditions</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout remark">
+<div class="label">Remark: Be Careful About the Conditions</div>
 Differentiability is not an easily-removed assumption, and is in fact quite important. 
 
 <!-- Intuitively, nondifferentiability means that there may be more than one competing exponential mechanism. -->
@@ -400,8 +400,8 @@ Differentiability is not an easily-removed assumption, and is in fact quite impo
 
 Now, we introduce an example of where Gärtner-Ellis fails to apply, in consideration of the remark above.
 
-<div class="callout example"><span class="label">Example: Gartner-Ellis on Gaussian Mixture</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Gartner-Ellis on Gaussian Mixture</div>
 Consider the Gaussian mixture distribution
 $$
 X_n\sim \frac{1}{2}\mathcal N\left(1,\frac{1}{n}\right)+\frac{1}{2}\mathcal N\left(-1,\frac{1}{n}\right).
@@ -453,8 +453,8 @@ $$
 This differs from the true rate function.
 </div>
 
-<div class="callout remark"><span class="label">Filling in the Gap: Why This Does Not Contradict Part (a)</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout remark">
+<div class="label">Filling in the Gap: Why This Does Not Contradict Part (a)</div>
 <span style="color:#b00020;">The handwritten notes ask why part (b) contradicts part (a). The resolution is that it does not contradict part (a), because the differentiability hypothesis in Gärtner-Ellis fails. The limiting scaled log MGF is
 $$
 \Lambda(t)=\frac{t^2}{2}+|t|,
@@ -497,8 +497,8 @@ $$
 \int e^{n(F(x)-I(x))}dx \approx \exp\left\{n\sup_x(F(x)-I(x))\right\}.
 $$
 
-<div class="callout theorem"><span class="label">Theorem: Varadhan's Theorem</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Varadhan's Theorem</div>
 Let $\mathbb P_n$ satisfy an LDP with rate $n$ and rate function $I(x)$. Let $F$ be a bounded continuous function. Then
 $$
 \lim_{n\rightarrow\infty}\frac{1}{n}\log\int e^{nF(x)}d\mathbb P_n(x)=\sup_x\{F(x)-I(x)\}.
@@ -511,16 +511,16 @@ Bryc's theorem is the reverse direction of Varadhan's theorem, but it is far les
 
 We give a preliminary definition, then state the theorem.
 
-<div class="callout definition"><span class="label">Definition: Exponential Tightness</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout definition">
+<div class="label">Definition: Exponential Tightness</div>
 A sequence of probability measures $\{\mathbb P_n\}$ is <i><strong>exponentially tight</strong></i> with speed $n$ if, for every $L<\infty$, there exists a compact set $K_L$ such that
 $$
 \limsup_{n\rightarrow\infty}\frac{1}{n}\log P_n(K_L^c)\leq -L.
 $$
 </div>
 
-<div class="callout theorem"><span class="label">Theorem: Bryc's Theorem</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Bryc's Theorem</div>
 For a bounded continuous function $F$, define
 $$
 \Lambda_n(F)\triangleq \frac{1}{n}\log\int e^{nF(x)}d\mathbb P_n(x).
@@ -537,8 +537,8 @@ I(x)=\sup_{F\in C_b}\{F(x)-\Lambda(F)\}.
 $$
 over all bounded continuous functions is usually not possible. Analogously, for the convergence in distribution results, we don't usually <i>literally</i> show that all continuous and bounded functions converge, but rather a useful subset, such as the moment generating function or characteristic function.
 
-<div class="callout remark"><span class="label">Remark: Varadhan vs. Bryc</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout remark">
+<div class="label">Remark: Varadhan vs. Bryc</div>
 Varadhan's theorem says:
 $$
 \text{LDP}\quad\Longrightarrow\quad\text{asymptotics of exponential integrals}.
@@ -589,15 +589,15 @@ $$
 $$
 which implies that the rate function is $J(y) = \inf_{x \in A_y} I(x)$.
 
-<div class="callout remark"><span class="label">More Rigorous Argument Using the Pushforward Measure</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout remark">
+<div class="label">More Rigorous Argument Using the Pushforward Measure</div>
 To do this more rigorously, we can avoid using densities and instead use the pushforward measure: we know that $\mathbb Q_n(B) = \mathbb P_n\big(T^{-1}(B)\big)$. Since we have the LDP for $\mathbb P_n$, we can apply it to the preimage $T^{-1}(B)$. Note that continuity of $T$ ensures that for open or closed $B$, $T^{-1}(B)$ remains open and closed, respectively.
 </div>
 
 Hence, we give the formal theorem for the contraction mapping theorem.
 
-<div class="callout theorem"><span class="label">Theorem: Contraction Mapping Theorem</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Contraction Mapping Theorem</div>
 Let $\{\mathbb P_n\}$ be a sequence of probability measures satisfying an LDP with rate $n$ and rate function $I(x)$. Let
 $$
 T:\mathcal X\rightarrow\mathcal Y

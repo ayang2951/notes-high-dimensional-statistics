@@ -101,8 +101,8 @@ $$
 $$
 The first approximation is because the nonlocal tails are exponentially small. The second approximation is because Taylor expansion gives a quadratic near $a$. The third approximation is because the shrinking interval is still much wider than the Gaussian scale $n^{-1/2}$.
 
-<div class="callout theorem"><span class="label">Theorem: Laplace's Method</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Laplace's Method</div>
 Suppose $h:\mathbb R\rightarrow\mathbb R^+$ is three times continuously differentiable near $0$, and suppose
 $$
 h(0)=0,\qquad h'(0)=0,\qquad h''(0)\geq c >0.
@@ -152,8 +152,8 @@ Finally, the contribution outside $[-\delta,\delta]$ is exponentially small by t
 </div>
 </details>
 
-<div class="callout remark"><span class="label">Remark: Recentered Laplace's Method</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout remark">
+<div class="label">Remark: Recentered Laplace's Method</div>
 If the unique minimizer is $a$ instead of $0$, and if $h(a)=0$, then translating the variable gives
 $$
 \int_{-\infty}^{\infty}e^{-nh(x)}dx \sim \sqrt{\frac{2\pi}{nh''(a)}}.

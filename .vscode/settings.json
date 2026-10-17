@@ -1,5 +1,7 @@
 {
-  "courseNotesPreview.workspaceCssFiles": ["styles.css"],
+  "courseNotesPreview.workspaceCssFiles": [
+    "styles.css"
+  ],
   "courseNotesPreview.autoNumberCallouts": true,
   "courseNotesPreview.openCollapsedProofs": false,
   "courseNotesPreview.noteFiles": [

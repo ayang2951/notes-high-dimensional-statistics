@@ -49,8 +49,8 @@ Z_n=\int\exp\{n\mu u^\top Xv\}d\sigma(u)d\lambda(v).
 $$
 This $Z_n$ is called the <i>partition function</i>. 
 
-<div class="callout remark"><span class="label">Remark: Remark for Above Example</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout remark">
+<div class="label">Remark: Remark for Above Example</div>
 This partition function, the normalizing factor, is very important: some go so far as to say that calculating the partition function is the <i>core</i> of statistical physics.
 </div>
 

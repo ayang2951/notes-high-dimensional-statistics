@@ -129,8 +129,8 @@ An edge case, termed endearingly by physicists as the only "nontrivial" case, is
 
 We now formalize these heuristic arguments. 
 
-<div class="callout theorem"><span class="label">Theorem: Asymptotics of PCA for Rank-One Spiked Matrix</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Asymptotics of PCA for Rank-One Spiked Matrix</div>
 Consider the rank-one (single spike) spiked matrix,
 $$
 X = \mu u v_*^\top + Z,
@@ -147,8 +147,8 @@ Hence, $\hat v$ is consistent.
 
 To prove this result, we need to introduce a bit of background in linear algebra. 
 
-<div class="callout proposition"><span class="label">Proposition: Schur's Formula</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout proposition">
+<div class="label">Proposition: Schur's Formula</div>
 For a block matrix 
 $$
 S = \begin{bmatrix}
@@ -162,8 +162,8 @@ $$
 $$
 </div>
 
-<div class="callout proposition"><span class="label">Proposition: Bounds on the Rayleigh Quotient</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout proposition">
+<div class="label">Proposition: Bounds on the Rayleigh Quotient</div>
 Let $v \in \mathbb R^n$ be an arbitrary vector and let $A \in \mathbb R^{n \times n}$ be a symmetric matrix. Then
 $$
 \lambda_{\min}(A) \leq \frac{v^\top A v}{v^\top v } \leq \lambda_{\max}(A).
@@ -171,15 +171,15 @@ $$
 The quantity $\frac{v^\top A v}{v^\top v}$ is called the <i><strong>Rayleigh quotient</strong></i>.
 </div>
 
-<div class="callout definition"><span class="label">Definition: Principal Submatrix</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout definition">
+<div class="label">Definition: Principal Submatrix</div>
 Let $A \in \mathbb R^{ \times n}$ be a symmetric matrix, and let $\mathcal I \subseteq \{1, 2 \ldots n\}$ be a subset of indices. Then
 $A[I] \triangleq (a_{ij})_{i, j \in \mathcal I}$
 is called a <i><strong>principal submatrix</strong></i> of $A$.
 </div>
 
-<div class="callout theorem"><span class="label">Theorem: Cauchy's Interlacing Theorem</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Cauchy's Interlacing Theorem</div>
 Let $A \in \mathbb R^{n \times n}$ be a symmetric matrix with eigenvalues $\lambda_1(A) \geq \lambda_2(A) \ldots \geq \lambda_n(A)$. Let $B \in \mathbb R^{m \times m}$ be a principal submatrix of $A$. Then, for all $j \in \{1, 2 \ldots m\}$, we have that
 $$
 \lambda_j(A) \geq \lambda_j(B) \geq \lambda_{j + n - m}(A).
@@ -189,8 +189,8 @@ This result is called <i><strong>Cauchy's interlacing theorem</strong></i>.
 
 A variant of Cauchy's interlacing theorem is the one where the $n \times n$ principal submatrix is obtained by deleting only the $i^{\text{th}}$ row and column.
 
-<div class="callout theorem"><span class="label">Theorem: Cauchy's Interlacing Theorem, Special $n - 1$ Case</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Cauchy's Interlacing Theorem, Special $n - 1$ Case</div>
 Let $A \in \mathbb R^{n \times n}$ be a symmetric matrix with eigenvalues $\lambda_1(A) \geq \lambda_2(A) \ldots \geq \lambda_n(A)$. Let $B \in \mathbb R^{n-1 \times n-1}$ be a principal submatrix of $A$ with eigenvalues $\lambda_1(B) \geq \lambda_2(B) \ldots \geq \lambda_{n - 1}(B)$. Then we have that
 $$
 \lambda_j(A) \geq \lambda_j(B) \geq \lambda_{j +1 }(A)
@@ -207,8 +207,8 @@ where the eigenvalues of $B$ are interlaced with those of $A$.
 <div class="collapsible__content">
 The proof of Cauchy's interlacing theorem requires the <i><strong>Courant-Fischer</i></strong> theorem, which we state here.
 
-<div class="callout theorem"><span class="label">Theorem: Courant-Fischer</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Courant-Fischer</div>
 Let $M \in \mathbb R^{m \times m}$ be a symmetric matrix, and let $\theta_1 \geq \theta_2 \ldots \geq \theta_m$ be its eigenvalues. Then, for $j \in [m]$, where $S_k^m$ is a subspace of $\mathbb R^m$ with dimension $k$, we have that
 $$
 \theta_j = \max_{S^m_j} \min_{x \in S_j^m\backslash\{0\}} R_M(x) = \min_{S^m_{m - j + 1}} \max_{x \in S^m_{m - j + 1}\backslash\{0\}} R_M(x),
@@ -250,8 +250,8 @@ X_1^\top X_1 - \lambda - X_1^\top X_{-1} (X_{-1}^\top X_{-1} - \lambda \mathbf I
 $$ 
 should have the solution $\lambda = 1 + \mu^2$. As we calculated before, $X_1^\top X_1 \rightarrow 1 + \mu^2$, so the other term, $X_1^\top X_{-1} (X_{-1}^\top X_{-1} - \lambda \mathbf I_{p - 1})^{-1} X_{-1}^\top X_1$, should converge to 0. This is our new immediate goal.
 
-<div class="callout remark"><span class="label">Remark: Consistency of the MLE</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout remark">
+<div class="label">Remark: Consistency of the MLE</div>
 Note that proving that $X_1^\top X_1 - (1 + \mu^2) - X_1^\top X_{-1} (X_{-1}^\top X_{-1} - \lambda \mathbf I_{p - 1})^{-1} X_{-1}^\top X_1 \rightarrow 0$ is insufficient to show that $\lambda_{\max}(X^\top X) \rightarrow 1 + \mu^2$. Recall that the proof of consistency for the maximum likelihood estimator required uniform convergence. We would also need to show that a solution exists at $\lambda = 1 + \mu^2$ with high probability using a uniform convergence argument.
 </div>
 

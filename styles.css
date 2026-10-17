@@ -13,6 +13,7 @@
   --ink-faint: #606060;
   --bg: #ffffff;
   --box: rgba(238, 238, 238, 0.45);
+  --neutral-surface: rgba(238, 238, 238, 0.15);
   --bkmk-box: rgba(255, 255, 255, 0.97);
   --line: rgba(27, 27, 27, 0.18);
   --line-soft: rgba(27, 27, 27, 0.08);
@@ -45,6 +46,7 @@ html[data-theme="dark"] {
   --ink-faint: #b6b6b6;
   --bg: #0e0f10;
   --box: #161616;
+  --neutral-surface: #161616;
   --bkmk-box: rgba(22, 22, 22, 0.98);
   --line: rgba(197, 197, 197, 0.22);
   --line-soft: rgba(197, 197, 197, 0.1);
@@ -156,7 +158,7 @@ a:focus-visible {
   padding: 0.25rem 0.7rem;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--box);
+  background: var(--neutral-surface);
   color: var(--ink);
   text-decoration: none;
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
@@ -195,6 +197,11 @@ a:focus-visible {
   margin: 0 0 var(--flow-space);
 }
 
+/* Keep table spacing consistent in prose, lists, and result environments. */
+#content table {
+  margin: var(--flow-space) 0;
+}
+
 #content ul,
 #content ol {
   margin: 0.5rem 0 var(--flow-space);
@@ -203,6 +210,11 @@ a:focus-visible {
 
 #content li + li {
   margin-top: 0.35rem;
+}
+
+/* Paragraphs keep normal spacing inside an item without widening item gaps. */
+#content li > p:last-child {
+  margin-bottom: 0;
 }
 
 #content li > ul,
@@ -223,10 +235,57 @@ a:focus-visible {
   overflow-y: hidden;
 }
 
+.display-math {
+  position: relative;
+}
+
+.numbered-equation > mjx-container[display="true"] {
+  box-sizing: border-box;
+  padding-inline: 3rem;
+}
+
+.equation-number {
+  position: absolute;
+  top: 50%;
+  right: 0.25rem;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+.reference-marker {
+  display: block;
+  height: 0;
+  margin: 0 !important;
+  padding: 0;
+  overflow: visible;
+}
+
+.equation-row-marker {
+  display: block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+[data-xref-target="true"] {
+  scroll-margin-top: 1rem;
+}
+
 #content a {
   color: inherit;
   text-decoration-thickness: 0.08em;
   text-underline-offset: 0.12em;
+}
+
+#content .cross-reference {
+  white-space: nowrap;
+}
+
+.collapsible > summary .cross-reference {
+  color: inherit;
+  text-decoration: none;
 }
 
 /* Result environments */
@@ -245,11 +304,6 @@ a:focus-visible {
   font-variant: normal;
   font-weight: 700;
   text-transform: none;
-}
-
-.callout > .label + br,
-.callout > hr[style*="visibility:hidden"] {
-  display: none;
 }
 
 .callout .label .callout-type,
@@ -284,7 +338,15 @@ a:focus-visible {
   background: var(--def-bkgd);
 }
 
-.callout.theorem {
+.callout.assumption,
+.callout.notation {
+  border-left-color: var(--def-color);
+  background: var(--def-bkgd);
+}
+
+.callout.theorem,
+.callout.axiom,
+.callout.conjecture {
   border-left-color: var(--thm-color);
   background: var(--thm-bkgd);
 }
@@ -294,7 +356,9 @@ a:focus-visible {
   background: var(--lem-bkgd);
 }
 
-.callout.proposition {
+.callout.proposition,
+.callout.claim,
+.callout.fact {
   border-left-color: var(--prop-color);
   background: var(--prop-bkgd);
 }
@@ -304,12 +368,15 @@ a:focus-visible {
   background: var(--cor-bkgd);
 }
 
-.callout.remark {
+.callout.remark,
+.callout.observation {
   border-left-color: var(--rmk-color);
   background: var(--rmk-bkgd);
 }
 
-.callout.example {
+.callout.example,
+.callout.exercise,
+.callout.problem {
   border-left-color: var(--ex-color);
   background: var(--ex-bkgd);
 }
@@ -319,7 +386,7 @@ a:focus-visible {
   margin: var(--flow-space) 0;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--box);
+  background: var(--neutral-surface);
 }
 
 .collapsible > summary {
@@ -353,6 +420,11 @@ a:focus-visible {
 
 .collapsible > .collapsible__content {
   padding: 0.75rem 1rem 1rem;
+}
+
+.callout .collapsible > .collapsible__content {
+  box-sizing: border-box;
+  padding: 1rem 1.25rem 1.25rem;
 }
 
 .collapsible__content > :first-child {
@@ -406,7 +478,9 @@ blockquote {
 
 /* Bookmark controls */
 .bookmark-btn {
-  display: inline;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-left: 0.45rem;
   padding: 0.1rem;
   border: 0;
@@ -418,7 +492,26 @@ blockquote {
   opacity: 0;
   pointer-events: none;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.bookmark-icon {
+  width: 0.85em;
+  height: 1em;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.bookmark-btn[aria-pressed="true"] {
+  color: var(--focus);
+}
+
+.bookmark-btn[aria-pressed="true"] .bookmark-icon,
+.bookmark-remove .bookmark-icon {
+  fill: currentColor;
 }
 
 .bookmarkable:hover .bookmark-btn,
@@ -499,6 +592,12 @@ blockquote {
   border-bottom: 0;
 }
 
+#bookmarkList > .bookmark-empty {
+  padding: 0.4rem 0;
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
 #bookmarkList li.heading-item strong {
   display: block;
   font-weight: 700;
@@ -553,8 +652,12 @@ blockquote {
 
 @media (hover: none), (pointer: coarse) {
   .bookmark-btn {
-    opacity: 0.8;
+    opacity: 0.45;
     pointer-events: auto;
+  }
+
+  .bookmark-btn[aria-pressed="true"] {
+    opacity: 1;
   }
 }
 
@@ -565,6 +668,10 @@ blockquote {
 
   .collapsible .collapsible {
     margin-left: 0.5rem;
+  }
+
+  .numbered-equation > mjx-container[display="true"] {
+    padding-inline: 0 2.75rem;
   }
 
   #bookmarkPanel {

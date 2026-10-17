@@ -4,8 +4,8 @@ _Overview: This section covers concentration of measure, which will be an underl
 
 Asymptotics is a useful place to turn to if finite-sample results are too difficult to obtain. There are many basic, essential tools for asymptotic analysis, such as the weak law of large numbers.
 
-<div class="callout theorem"><span class="label">Theorem: Weak Law of Large Numbers</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Weak Law of Large Numbers</div>
 Let $\{X_n\}_{n = 1}^\infty$ be a sequence of integrable and independent and identically distributed random variables with mean $\mu$. Then the <i><strong>weak law of large numbers</i></strong> states that the sample mean, defined for each $n$ as $\bar X_n \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$, converges in probability to $\mu$: for all $\epsilon > 0$,
 $$
 \mathbb P\left(|\bar X_n - \mu| > \epsilon \right) \rightarrow 0.
@@ -14,8 +14,8 @@ $$
 
 One issue the WLLN fails to address is the rate at which the sample mean converges: it only states that it <i>will</i> converge. We might want to use asymptotics as an approximation of finite sample results, but how do we know how "good" that approximation is? Another useful tool, the central limit theorem, helps to address this.
 
-<div class="callout theorem"><span class="label">Theorem: Central Limit Theorem</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Central Limit Theorem</div>
 Let $\{X_n\}_{n = 1}^\infty$ be a sequence of square integrable and independent and identically distributed random variables with mean $\mu$ and variance $\sigma^2$. Then the <i><strong>central limit theorem</i></strong> states that for the sample mean, defined for each $n$ as $\bar X_n \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$,
 $$
 \sqrt{n}(\bar X_n - \mu) \overset{d}\rightarrow \mathcal N(0, \sigma^2).
@@ -50,8 +50,8 @@ Here, we shall introduce several core results in concentration of measure, inclu
 
 The first result we state is Hoeffding's inequality.
 
-<div class="callout theorem"><span class="label">Theorem: Hoeffding's Inequality</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Hoeffding's Inequality</div>
 Let $\{X_i\}_{i = 1}^n$ be independent random variables where each is bounded: $a_i \leq X \leq b_i$. Define $X \triangleq \frac{1}{n} \sum_{i = 1}^n X_i$ and define $a \triangleq \frac{1}{n}\sum_{i = 1}^n a_i$ and $b \triangleq \frac{1}{n} \sum_{i = 1}^n b_i$. Then
 $$
 \mathbb P \left( \left|\frac{1}{n} \sum_{i = 1}^n - \mathbb E[X]\right| > t \right) \leq 2 \cdot \exp \left\{ -\frac{2}{b - a} n t^2  \right\}
@@ -60,8 +60,8 @@ $$
 
 Let's compare this result to the simplest case: a finite-sample analysis of Gaussians.
 
-<div class="callout example"><span class="label">Example: Gaussian Bound</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Gaussian Bound</div>
 Let $X_1, X_2 \ldots X_n \sim \mathcal N(0, \sigma^2)$. Then
 $$
 \mathbb P \left(\left|\frac{1}{n} \sum_{i = 1}^n X_i\right| > t \right) = \mathbb P_{Z \sim \mathcal N(0, 1)} \left(|\sigma Z| > \sqrt{n} t\right) \leq 2 \int_{\sqrt{n}t}^\infty \frac{z}{\sqrt{n}t} \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{z^2}{2\sigma^2}} dz \ \ \propto \exp \left\{-\frac{1}{2\sigma^2} nt^2\right\}
@@ -72,8 +72,8 @@ We notice that the variance, $\sigma^2$, appears in the bound, whereas in Hoeffd
 
 Hence, Hoeffding seems not to be the tightest bound we can get. Bernstein's inequality gives us this.
 
-<div class="callout theorem"><span class="label">Theorem: Bernstein's Inequality</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Bernstein's Inequality</div>
 Let $X_1, X_2 \ldots X_n$ be zero-mean iid random variables where $|X| < M$. Then
 $$
 \mathbb P \left(\left|\frac{1}{n} \sum_{i = 1}^n X_i\right| > t\right) \leq 2 \cdot \exp \left\{-\frac{n^2t^2}{2 \left(n \text{Var}(X) + \frac{Mt}{3}\right)}\right\}
@@ -84,8 +84,8 @@ Note that the above two results are for bounded random variables. We can conduct
 
 This motivates us to think about what should matter when giving concentration results: something that should matter a lot, given our thought experiment above, is the tail behavior of the distribution. How would $\max \{|X_1|, |X_2| \ldots |X_n|\}$ behave?
 
-<div class="callout example"><span class="label">Example: Gaussian Tail Behavior</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Gaussian Tail Behavior</div>
 Let $X_1, X_2 \ldots X_n \overset{iid}\sim \mathcal N(0, 1)$. Then for $X_{(n)} \triangleq \max \{X_1, X_2 \ldots X_n\}$, i.e. the $n$th order statistic,
 $$
 \frac{X_{(n)}}{\sqrt{2 \log n}} \overset{p}\rightarrow 1.
@@ -96,16 +96,16 @@ We see from this example that the growth is order $\sqrt{\log n}$, which is <i>m
 
 So, in our journey to extend concentration of measure results from bounded to unbounded random variables, we should turn our attention to studying tail behaviors. To this end, let us introduce a few key definitions first.
 
-<div class="callout definition"><span class="label">Definition: Subgaussian Random Variable</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout definition">
+<div class="label">Definition: Subgaussian Random Variable</div>
 A random variable $X$ is <i><strong>subgaussian</i></strong> if there exist constants $c, C$ such that 
 $$
 \mathbb P(|X| > t) \leq C \cdot e^{-ct^2}.
 $$
 </div>
 
-<div class="callout definition"><span class="label">Definition: Subexponential Random Variable</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout definition">
+<div class="label">Definition: Subexponential Random Variable</div>
 A random variable $X$ is <i><strong>subexponential</i></strong> if there exist constants $c, C$ such that 
 $$
 \mathbb P(|X| > t) \leq C \cdot e^{-ct}.
@@ -114,16 +114,16 @@ $$
 
 Using these definitions, we may establish concentrataion of measure results for these two types of (possibly) unbounded random variables.
 
-<div class="callout proposition"><span class="label">Proposition: Bound for Subgaussian RVs</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout proposition">
+<div class="label">Proposition: Bound for Subgaussian RVs</div>
 Let $X_1, X_2 \ldots X_n$ be iid copies of a subgaussian random variable $X$. Then there exist positive constants $c_1, c_2$ such that
 $$
 \mathbb P\left(\left|\frac{1}{n} \sum_{i = 1}^n X_i - \mathbb E[X_i]\right| > t \right) \leq c_1 e^{-c_2 n t^2}.
 $$
 </div>
 
-<div class="callout proposition"><span class="label">Proposition: Bound for Subexponential RVs</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout proposition">
+<div class="label">Proposition: Bound for Subexponential RVs</div>
 Let $X_1, X_2 \ldots X_n$ be iid copies of a subexponential random variable $X$. Then there exist positive constants $c_1, c_2, c_3, c_4$, and $c$ such that
 $$
 \mathbb P\left(\left|\frac{1}{n} \sum_{i = 1}^n X_i - \mathbb E[X_i]\right| > t \right) \leq \begin{cases} c_1 e^{-c_2 n t^2} & t \leq c \\ c_3 e^{-c_4 nt} & t > c \end{cases} \ \ .
@@ -146,8 +146,8 @@ $$
 $$
 The simplest tool we have is Markov's inequality.
 
-<div class="callout theorem"><span class="label">Theorem: Markov's Inequality</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Markov's Inequality</div>
 Let $X$ be an integrable nonnegative random variable. Then
 $$
 \mathbb P(X > t) \leq \frac{\mathbb E[X]}{t}.
@@ -166,8 +166,8 @@ Equality $(1)$ is by definition of expectation over the probability measure, ine
 </div>
 </details>
 
-<div class="callout corollary"><span class="label">Corollary: Chebyshev's Inequality</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout corollary">
+<div class="label">Corollary: Chebyshev's Inequality</div>
 Let $X$ be a squarae integrable random variable. Then
 $$
 \mathbb P(|X - \mathbb E[X]| > t) \leq \frac{\text{Var}(X)}{t^2}.
@@ -194,8 +194,8 @@ We make an observation here: if we can control the (possibly the average) gradie
 
 To this end, let's look at functions that have precisely this nice property.
 
-<div class="callout definition"><span class="label">Definition: Lipschitz Continuity</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout definition">
+<div class="label">Definition: Lipschitz Continuity</div>
 A function $F : \mathbb R^n \rightarrow \mathbb R$ is <i><strong>Lipschitz continuous</i></strong> with constant $L$ if
 $$
 |F(x_1, x_2 \ldots x_n) - F(y_1, y_2 \ldots y_n)| \leq L \cdot \Vert x - y \Vert_2.
@@ -204,8 +204,8 @@ $$
 
 And this definition directly plays into our gradient requirement via the following proposition.
 
-<div class="callout proposition"><span class="label">Proposition: Mean Value Inequality on Lipschitz Functions</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout proposition">
+<div class="label">Proposition: Mean Value Inequality on Lipschitz Functions</div>
 Let a function $F : \mathbb R^n \rightarrow \mathbb R$ be $L$-Lipschitz and differentiable. Then
 $$
 \Vert \nabla F \Vert_2 \leq L.
@@ -243,8 +243,8 @@ The notion of self-averaging comes from physics. The mathematical idea, for now,
 
 We provide an example first. In fact, this example will be very useful for our future analysis in random matrix theory.
 
-<div class="callout example"><span class="label">Example: Self-Averaging of the Quadratic Form</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Self-Averaging of the Quadratic Form</div>
 Suppose we have a random vector (overloading notation a little bit) $\vec X_n \triangleq (X_i)_{i = 1}^n$, where elements $X_i \overset{iid}\sim N\left(0, \frac{1}{n} \right)$. The scaling $\frac{1}{n}$ will be explained in more detail later. Suppose further we have a matrix $A_n$ that is symmetric (it is deterministic for now, but we'll later look at random versions where $A_n$ is independent of $\vec X_n$) and that $|\lambda_{\max}(A)| \leq L$. Define the function
 $$
 F_n(X_n) \triangleq \vec X_n^\top A_n \vec X_n.
@@ -316,8 +316,8 @@ The latter type, as we may surmise from the form, can be called Chebyshev-type i
 
 We see that a major task when looking at the Chebyshev-type inequalities will be to bound the variance, $\text{Var}(F_n)$. Let's look at two extreme toy examples to develop an intuition on how to proceed.
 
-<div class="callout example"><span class="label">Example: Toy Examples for $\text{Var}(F)$</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Toy Examples for $\text{Var}(F)$</div>
 Suppose for simplicity that $\text{supp}(F) \subseteq [0, 1]$.
 
 First, in one extreme, take $F_n(X_n) \equiv c$ for a constant $c \in \mathbb R$. Then $\text{Var}(F)$ is 0, and the concentration is trivial.
@@ -329,8 +329,8 @@ However, we don't expect the typical functions of interest to behave in this way
 
 Two tools we shall use for bounding the variance $\text{Var}(F_n)$ will be the <i>Efron-Stein inequality</i> and the <i>Poincaré inequality</i>. Let's start with Efron-Stein.
 
-<div class="callout theorem"><span class="label">Theorem: Efron-Stein Inequality</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Efron-Stein Inequality</div>
 Let $Z_n = F_n(X_n)$, where $X_n \triangleq (X_i)_{i = 1}^n$ are iid. Let $\tilde X_n \triangleq (\tilde X_i)_{i = 1}^n$ be independent copies of $X_i$, and denote $\tilde X_n^{(i)}$ denote the vector where $X_i$ has been exchanged with $\tilde X_i$, i.e. $\tilde X_n^{(i)} \triangleq (X_1 \ldots X_{i - 1}, \tilde X_i, X_{i + 1} \ldots X_n)$.
 $$
 \text{Var}(Z_n) \leq \frac{1}{2} \sum_{i = 1}^n \mathbb E \left[\left(F_n(X_n) - F_n(\tilde X_n^{(i)})\right)^2\right].
@@ -339,8 +339,8 @@ $$
 
 Let's consider a toy example in applying the E-S inequality, U-statistics.
 
-<div class="callout example"><span class="label">Example: E-S on U-Statistics</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: E-S on U-Statistics</div>
 Let $X_n = (X_i)_{i = 1}^n$ have iid components. Let $g : \mathbb R^2 \rightarrow \mathbb R$ be a bounded function, i.e. $\Vert G \Vert_\infty \leq C$ for some $C \in \mathbb R^+$.
 
 Define the statistic
@@ -372,8 +372,8 @@ $$
 $$
 What can we say about random variables that satisfy this for every $F$?
 
-<div class="callout definition"><span class="label">Definition: Poincaré Inequality</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout definition">
+<div class="label">Definition: Poincaré Inequality</div>
 A random variable $X$ satisfies the <i><strong>Poincaré inequality</i></strong> with constant $c$ if, for every differentiable function $f$, we have that
 $$
 \text{Var}(f(X)) \leq c \cdot \mathbb E\left[f'(X)^2\right].
@@ -382,8 +382,8 @@ $$
 
 We present a few examples of random variables that satisfy the Poincaré inequality.
 
-<div class="callout example"><span class="label">Example: Random Variables Satisfying the Poincaré Inequality</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Random Variables Satisfying the Poincaré Inequality</div>
 Here are random variables that satisfy the Poincaré inequality.
 <ol type="1">
   <li>Uniform random variables $X \sim \text{Unif}([a, b])$ satisfy the Poincaré inequality with constant $\frac{1}{2}(b - a)$.</li>
@@ -422,8 +422,8 @@ $$
 
 We might hope that the Poincaré inequality applies broadly to all subgaussian random variables... But this turns out not to be true. We provide an example below.
 
-<div class="callout example"><span class="label">Example: Random Variables Satisfying the Poincaré Inequality</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Random Variables Satisfying the Poincaré Inequality</div>
 Note that all bounded random variables are subgaussian. 
 
 ......
@@ -433,8 +433,8 @@ Hence, we can make an educated guess that the Poincaré inequality will not be h
 
 One of the very useful properties of the Poincaré inequality is <i>tensorization</i>, meaning it extends very naturally into higher dimensions without the constant $c$ exploding.
 
-<div class="callout theorem"><span class="label">Theorem: Tensorization of the Poincaré Inequality</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Tensorization of the Poincaré Inequality</div>
 Let $X_1, X_2 \ldots X_n$ be independent random variables satisfying the Poincaré inequality with constants $c_i$. Then the random vector $X = (X_i)_{i = 1}^n$ satisfies the Poincaré inequality with constant $c = \max \{c_1, c_2 \ldots c_n\}$, i.e.
 $$
 \text{Var}(f(X)) \leq c \cdot \mathbb E\left[\Vert \nabla f(X) \Vert_2^2\right]
@@ -471,8 +471,8 @@ $$
 
 We return to our favorite example: the max singular value.
 
-<div class="callout example"><span class="label">Example: Poincaré on a Gaussian Random Matrix</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Poincaré on a Gaussian Random Matrix</div>
 Let $A$ be a random matrix with $A_{ij} \overset{iid}\sim \mathcal N(0, 1)$. We'd like to show something of the form
 $$
 \mathbb P(|\sigma_\max(A) - \mathbb E[\sigma_\max(A)] > t).
@@ -519,13 +519,13 @@ $$
 
 Two remarks about the above example.
 
-<div class="callout remark"><span class="label">Remark: Scaling of the Gaussian Entries</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout remark">
+<div class="label">Remark: Scaling of the Gaussian Entries</div>
 Note that the bound is $\frac{1}{t^2}$, which doesn't converge in $n$. We can change the scaling, e.g. to $A_{ij} \overset{iid}\sim \mathcal N\left(0, \frac{1}{n}\right)$, to obtain something that converges in $n$.
 </div>
 
-<div class="callout remark"><span class="label">Remark: Other Lipschitz Spectrum-Related Functions</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout remark">
+<div class="label">Remark: Other Lipschitz Spectrum-Related Functions</div>
 It turns out that all functions of the type $\sigma(\boldsymbol\cdot)$ or $\lambda(\boldsymbol\cdot)$ are Lipschitz. The generalization is called Weyl's theorem.
 </div>
 
@@ -537,8 +537,8 @@ Exponential type inequalities have tighter bounds. Where the Chebyshev-type ineq
 
 We'll introduce two tools that form a sort of analog to the E-S and Poincaré inequalities. The first is McDiarmid's inequality, the exponential-type "version" of Efron-Stein.
 
-<div class="callout theorem"><span class="label">Theorem: McDiarmid's Inequality</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: McDiarmid's Inequality</div>
 Let $X_n = (X_i)_{i = 1}^n$ be a random vector of independent random variables. Let $\tilde X_n$ be an independent copy of $X_n$, and define $\tilde X_n^{i}$ to be the vector $X_n$ replacing $X_i$ with $\tilde X_i$.
 
 Let $f$ be a function of $X_n$. Suppose that there exist constants $c_1, c_2 \ldots c_n$ such that
@@ -556,8 +556,8 @@ Let's compare this with Efron-Stein, which upper bounds the variance with $\sum_
 
 Now, we turn to the log-Sobolev inequality, the analog of Poincaré. We first define what it means for a distribution to satisfy the log-Sobolev inequality.
 
-<div class="callout definition"><span class="label">Definition: Logarithmic-Sobolev Inequality</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout definition">
+<div class="label">Definition: Logarithmic-Sobolev Inequality</div>
 A probability measure $\mu$ on $\mathbb R^n$ satisfies the <i><strong>logarithmic Sobolev inequality</i></strong> with constant $c$ if, for all differentiable functions $f : \mathbb R^n \rightarrow \mathbb R$, we have that
 $$
 \mathbb E\left[f^2 \log f^2\right] - \mathbb E[f^2] \cdot \log (\mathbb E[f^2]) \leq 2c \cdot \mathbb E[\Vert \nabla f \Vert_2^2].
@@ -576,8 +576,8 @@ What about the $\log$ term? First, using the $\log$ represents using the entropy
 
 To show that log-Sobolev has a more stringent condition than Poincaré, we show that the former implies the latter.
 
-<div class="callout proposition"><span class="label">Proposition: Log-Sobolev Implies Poincaré</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout proposition">
+<div class="label">Proposition: Log-Sobolev Implies Poincaré</div>
 For any square integrable function $f$,
 $$
 \text{Var}(f) \leq \int f^2 \log f^2 d\mu - \int f^2 d\mu \cdot \log \left(\int f^2 d\mu\right).
@@ -587,8 +587,8 @@ Hence, log-Sobolev implies Poincaré, but not vice versa.
 
 Let us now look at a few examples.
 
-<div class="callout example"><span class="label">Example: Random Variables Satisfying Poincaré</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Random Variables Satisfying Poincaré</div>
 A random variable $X \sim \text{Unif}([0, 1])$ satisfies the log-Sobolev inequality with constant $c = \frac{1}{2\pi^2}$.
 
 A random variable $X \sim \text{Exp}(\lambda)$ does <i>not</i> satisfy log-Sobolev.
@@ -598,8 +598,8 @@ For a measure $\mu$ on $\mathbb R$ with a density $\mu(x) = \frac{1}{z} e^{-\nu(
 
 Just as with Poincaré, log-Sobolev enjoys a tensorization property.
 
-<div class="callout theorem"><span class="label">Theorem: Tensorization Property of Log-Sobolev</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Tensorization Property of Log-Sobolev</div>
 For probability measures $\mu_1, \mu_2 \ldots \mu_n$ on $\mathbb R$, suppose that each $\mu_i$ satisfies the log-Sobolev inequality with constant $c_i$. Then $\mu_1 \otimes \mu_2 \ldots \otimes \mu_n$ satisfies log-Sobolev with constant $c = \max \{c_1, c_2 \ldots c_n\}$.
 </div>
 
@@ -607,15 +607,15 @@ The proof of this is in Wainwright's book.
 
 For example, take our previous proposition about random variables with densities of some exponential form.
 
-<div class="callout example"><span class="label">Example: Tensorization on Exponential Densities</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Tensorization on Exponential Densities</div>
 For a distribution $\mu$ on $\mathbb R^n$, if the density $\mu(x) = \frac{1}{2} e^{-\nu(x)}$ and $\nu(x) - \frac{\Vert x \Vert^2}{2c}$ is convex, then the distribution satisfies log-Sobolev with constant $c$. 
 </div>
 
 Now, we introduce a core theorem that makes the connection between the log-Sobolev inequality and subgaussian concentration.
 
-<div class="callout theorem"><span class="label">Theorem: Herbst's Theorem</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Herbst's Theorem</div>
 Let $\mu$ be a measure on $\mathbb R$ satisfying the log-Sobolev inequality with constant $c$. Then, for all $L$-Lipschitz functions $f$, we have that
 $$
 \mathbb P \left(\left|f(x) - \mathbb E[f(x)]\right| > t \right) \leq 2 \cdot \exp \left\{-\frac{t^2}{2c L^2}\right\}.
@@ -625,8 +625,8 @@ This theorem is often referred to as <i><strong>Herbst's theorem</i></strong>.
 
 We return to our favorite example, the largest singular value of a random matrix.
 
-<div class="callout example"><span class="label">Example: Log-Sobolev on a Gaussian Random Matrix</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Log-Sobolev on a Gaussian Random Matrix</div>
 Let $A \in \mathbb R^{n \times p}$ where $A_{ij} \overset{iid}\sim \mathcal N(0, 1)$. Let $\sigma_\max(A)$ denote the largest (in magnitude) singular value of $A$. Then, because the entries are iid gaussian, each is log-Sobolev with constant 1, and the entire matrix hence satisfies log-Sobolev by tensorization.
 
 We have shown before that $\sigma_\max(A)$ is 1-Lipschitz, i.e. $|\sigma_\max(A) - \sigma_\max(B)| \leq \Vert A - B \Vert_F$. Hence, we have that

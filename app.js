@@ -17,8 +17,41 @@ const CALLOUT_TYPES = [
   "theorem",
   "remark",
   "corollary",
-  "example"
+  "example",
+  "assumption",
+  "axiom",
+  "claim",
+  "conjecture",
+  "fact",
+  "exercise",
+  "observation",
+  "notation",
+  "problem"
 ];
+
+const REFERENCE_LABELS = new Map([
+  ...CALLOUT_TYPES.map((type) => [
+    type,
+    type.charAt(0).toUpperCase() + type.slice(1)
+  ]),
+  ["eq", "Equation"]
+]);
+
+const GENERIC_REFERENCE_TEXT = new Set([
+  ...REFERENCE_LABELS.values(),
+  "Eq",
+  "Eq.",
+  "Lem.",
+  "Prop.",
+  "Thm.",
+  "Cor.",
+  "Reference",
+  "Ref",
+  "Result"
+].map((label) => label.toLocaleLowerCase()));
+
+let referenceRegistry = new Map();
+const equationNumbering = window.CourseNotesEquationNumbering;
 
 const storagePrefix = window.COURSE_NOTES_STORAGE_PREFIX ||
   `course-notes:${window.location.pathname.replace(/\/index\.html$/, "/")}:`;
@@ -42,6 +75,30 @@ function escapeMathHtml(value) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
+}
+
+const MATH_CHARACTER_PLACEHOLDER = /COURSECNOTESPROTECTEDTEXCHAR(\d+)X/g;
+
+function protectMathSyntax(value) {
+  return String(value).replace(
+    /\$\$[\s\S]*?\$\$|\$(?!\$)(?:\\.|[^\\$\n])+?\$(?!\$)/g,
+    (math) => math.replace(
+      /[\u0021-\u0023\u0025-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E]/g,
+      (character) => `COURSECNOTESPROTECTEDTEXCHAR${character.codePointAt(0)}X`
+    )
+  );
+}
+
+function restoreMathSyntax(value) {
+  return String(value).replace(MATH_CHARACTER_PLACEHOLDER, (_match, codePoint) => {
+    const character = String.fromCodePoint(Number(codePoint));
+    if (character === "&") return "&amp;";
+    if (character === "<") return "&lt;";
+    if (character === ">") return "&gt;";
+    if (character === '"') return "&quot;";
+    if (character === "'") return "&#39;";
+    return character;
+  });
 }
 
 const escapedDollarExtension = {
@@ -74,7 +131,9 @@ const displayMathExtension = {
     return match.index + (match[1] ? 1 : 0);
   },
   tokenizer(source) {
-    const match = /^\$\$[ \t]*\n([\s\S]*?)\n\$\$[ \t]*(?:\n|$)/.exec(source);
+    const match =
+      /^\$\$[ \t]*\n([\s\S]*?)\n\$\$[ \t]*(?:\n|$)/.exec(source) ||
+      /^\$\$(?!\$)([^\n]*?)\$\$[ \t]*(?:\n|$)/.exec(source);
     if (!match || !match[1].trim()) return undefined;
 
     return {
@@ -84,7 +143,32 @@ const displayMathExtension = {
     };
   },
   renderer(token) {
-    return `\\[\n${escapeMathHtml(token.text)}\n\\]\n`;
+    if (equationNumbering?.parseOuterAlignEnvironment(token.text)) {
+      return `<div class="display-math aligned-equations">${escapeMathHtml(token.raw.trim())}</div>\n`;
+    }
+    return `<div class="display-math">\\[\n${escapeMathHtml(token.text)}\n\\]</div>\n`;
+  }
+};
+
+const alignMathExtension = {
+  name: "alignMath",
+  level: "block",
+  start(source) {
+    const match = /(^|\n) {0,3}\\begin\s*\{align\*?\}/.exec(source);
+    if (!match) return undefined;
+    return match.index + (match[1] ? 1 : 0);
+  },
+  tokenizer(source) {
+    const block = equationNumbering?.alignBlockAtStart(source);
+    if (!block) return undefined;
+    return {
+      type: "alignMath",
+      raw: block.raw,
+      text: block.tex
+    };
+  },
+  renderer(token) {
+    return `<div class="display-math aligned-equations">${escapeMathHtml(token.text)}</div>\n`;
   }
 };
 
@@ -111,15 +195,21 @@ const inlineMathExtension = {
 };
 
 function configureMarkdown() {
-  if (!window.marked?.use || !window.marked?.parse) {
+  if (!window.CourseNotesHtmlMarkdown?.createHtmlRenderer || !window.marked?.use || !window.marked?.parse) {
     throw new Error("The Markdown renderer did not load.");
   }
+
+  const renderer = new window.marked.Renderer();
+  renderer.html = window.CourseNotesHtmlMarkdown.createHtmlRenderer(window.marked);
+  renderer.paragraph = window.CourseNotesHtmlMarkdown.createParagraphRenderer(window.marked);
 
   window.marked.use({
     gfm: true,
     breaks: false,
+    renderer,
     extensions: [
       escapedDollarExtension,
+      alignMathExtension,
       displayMathExtension,
       inlineMathExtension
     ]
@@ -127,7 +217,7 @@ function configureMarkdown() {
 }
 
 function renderMarkdown(markdown) {
-  return window.marked.parse(markdown);
+  return restoreMathSyntax(window.marked.parse(protectMathSyntax(markdown)));
 }
 
 function sectionMarkup(note, index, body) {
@@ -166,10 +256,15 @@ async function loadAll() {
   const content = byId("content");
   const parts = await Promise.all(ORDERED_NOTES.map(loadNote));
   content.innerHTML = parts.join("\n");
+  window.CourseNotesHtmlMarkdown.normalizeParagraphs(content);
 
+  materializeReferenceLinks(content);
+  wrapUnprocessedDisplayMath(content);
   buildToc();
   autoNumberCallouts();
+  autoNumberEquations();
   addBookmarkButtons();
+  referenceRegistry = buildReferenceRegistry();
 
   if (window.MathJax?.typesetPromise) {
     try {
@@ -178,6 +273,140 @@ async function loadAll() {
       console.error("MathJax could not typeset the notes.", error);
     }
   }
+
+  connectAlignedEquationRows();
+  resolveCrossReferences();
+  refreshBookmarkLabels();
+  renderBookmarks();
+
+  scrollToCurrentReference();
+}
+
+function referenceKind(id) {
+  const value = String(id || "").toLocaleLowerCase();
+  const namespaced = /^([a-z][a-z0-9-]*)(?::|;)([a-z0-9][a-z0-9._-]*)$/.exec(value);
+  if (namespaced) return namespaced[1];
+
+  return Array.from(REFERENCE_LABELS.keys()).find((kind) => value.startsWith(`${kind}-`)) || "";
+}
+
+function decodedFragment(link) {
+  const href = link?.getAttribute("href") || "";
+  if (!href.startsWith("#") || href.length < 2) return "";
+
+  try {
+    return decodeURIComponent(href.slice(1));
+  } catch (error) {
+    return href.slice(1);
+  }
+}
+
+function materializeReferenceLinks(root) {
+  const labels = Array.from(new Set([
+    ...REFERENCE_LABELS.values(),
+    "Eq",
+    "Eq.",
+    "Lem.",
+    "Prop.",
+    "Thm.",
+    "Cor.",
+    "Reference",
+    "Ref",
+    "Result"
+  ])).sort((left, right) => right.length - left.length);
+  const escapedLabels = labels.map((label) => label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const pattern = new RegExp(
+    `\\[(${escapedLabels.join("|")})\\]\\(#((?:[a-z][a-z0-9-]*(?::|;)[a-z0-9][a-z0-9._-]*|eq-[a-z0-9][a-z0-9._-]*))\\)`,
+    "gi"
+  );
+  const nodes = [];
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      const parent = node.parentElement;
+      if (!parent || parent.closest("a, code, pre, script, style, textarea, .tex2jax_ignore, .display-math")) {
+        return NodeFilter.FILTER_REJECT;
+      }
+      pattern.lastIndex = 0;
+      return pattern.test(node.textContent)
+        ? NodeFilter.FILTER_ACCEPT
+        : NodeFilter.FILTER_SKIP;
+    }
+  });
+
+  let node = walker.nextNode();
+  while (node) {
+    nodes.push(node);
+    node = walker.nextNode();
+  }
+
+  nodes.forEach((textNode) => {
+    const fragment = document.createDocumentFragment();
+    const source = textNode.textContent;
+    let cursor = 0;
+    pattern.lastIndex = 0;
+    let match = pattern.exec(source);
+
+    while (match) {
+      fragment.append(source.slice(cursor, match.index));
+      const link = document.createElement("a");
+      link.href = `#${match[2]}`;
+      link.textContent = match[1];
+      fragment.appendChild(link);
+      cursor = pattern.lastIndex;
+      match = pattern.exec(source);
+    }
+
+    fragment.append(source.slice(cursor));
+    textNode.replaceWith(fragment);
+  });
+}
+
+function wrapUnprocessedDisplayMath(root) {
+  const nodes = [];
+  const pattern = /\$\$[ \t]*\n?([\s\S]*?)\n?[ \t]*\$\$|\\begin\s*\{(align\*?)\}[\s\S]*?\\end\s*\{\2\}/g;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      const parent = node.parentElement;
+      if (!parent || parent.closest("code, pre, script, style, textarea, .tex2jax_ignore, .display-math")) {
+        return NodeFilter.FILTER_REJECT;
+      }
+      pattern.lastIndex = 0;
+      return pattern.test(node.textContent)
+        ? NodeFilter.FILTER_ACCEPT
+        : NodeFilter.FILTER_SKIP;
+    }
+  });
+
+  let node = walker.nextNode();
+  while (node) {
+    nodes.push(node);
+    node = walker.nextNode();
+  }
+
+  nodes.forEach((textNode) => {
+    const fragment = document.createDocumentFragment();
+    const source = textNode.textContent;
+    let cursor = 0;
+    pattern.lastIndex = 0;
+    let match = pattern.exec(source);
+
+    while (match) {
+      fragment.append(source.slice(cursor, match.index));
+      const wrapper = document.createElement("div");
+      const rawMath = match[0];
+      const aligned = equationNumbering?.parseOuterAlignEnvironment(rawMath);
+      wrapper.className = `display-math${aligned ? " aligned-equations" : ""}`;
+      wrapper.textContent = aligned
+        ? rawMath.trim()
+        : `\\[\n${match[1].trim()}\n\\]`;
+      fragment.appendChild(wrapper);
+      cursor = pattern.lastIndex;
+      match = pattern.exec(source);
+    }
+
+    fragment.append(source.slice(cursor));
+    textNode.replaceWith(fragment);
+  });
 }
 
 function buildToc() {
@@ -186,9 +415,11 @@ function buildToc() {
   const list = document.createElement("div");
   list.className = "toc-list";
 
-  content.querySelectorAll(".note-section > h1").forEach((heading) => {
+  content.querySelectorAll(".note-section").forEach((section) => {
+    const heading = section.querySelector(":scope > h1");
+    if (!heading) return;
     const link = document.createElement("a");
-    link.href = `#${heading.parentElement.id}`;
+    link.href = `#${section.id}`;
     link.textContent = heading.textContent;
     list.appendChild(link);
   });
@@ -214,6 +445,46 @@ function stripCalloutType(label, type) {
   }
 }
 
+function standaloneMarkerAnchors(element) {
+  if (!element) return [];
+  if (element.matches("a[id]")) {
+    return element.textContent.trim() ? [] : [element];
+  }
+  if (!element.matches("p")) return [];
+
+  const clone = element.cloneNode(true);
+  clone.querySelectorAll("a[id]").forEach((anchor) => anchor.remove());
+  if (clone.textContent.trim() || clone.querySelector("*")) return [];
+
+  const anchors = Array.from(element.querySelectorAll(":scope > a[id]"));
+  return anchors.length && anchors.every((anchor) => !anchor.textContent.trim())
+    ? anchors
+    : [];
+}
+
+function precedingMarkerAnchors(element) {
+  const anchors = [];
+  let sibling = element.previousElementSibling;
+
+  while (sibling) {
+    const found = standaloneMarkerAnchors(sibling);
+    if (!found.length) break;
+    anchors.unshift(...found);
+    sibling.classList.add("reference-marker");
+    sibling = sibling.previousElementSibling;
+  }
+
+  return anchors;
+}
+
+function annotateReferenceTarget(element, label, number, semanticTarget = element) {
+  if (!element) return;
+  element.dataset.xrefLabel = label;
+  element.dataset.xrefNumber = number;
+  element.dataset.xrefTarget = "true";
+  element.courseNotesReferenceTarget = semanticTarget;
+}
+
 function autoNumberCallouts() {
   byId("content").querySelectorAll(".note-section").forEach((section) => {
     const sectionNumber = section.dataset.sec || "0";
@@ -227,6 +498,15 @@ function autoNumberCallouts() {
       const number = `${sectionNumber}.${counters[type]}`;
       if (!callout.id) callout.id = `${type}-${sectionNumber}-${counters[type]}`;
 
+      const typeLabel = REFERENCE_LABELS.get(type);
+      annotateReferenceTarget(callout, typeLabel, number);
+      precedingMarkerAnchors(callout)
+        .filter((anchor) => {
+          const kind = referenceKind(anchor.id);
+          return kind && kind !== "eq" && REFERENCE_LABELS.has(kind);
+        })
+        .forEach((anchor) => annotateReferenceTarget(anchor, typeLabel, number, callout));
+
       const label = callout.querySelector(":scope > .label");
       if (!label || label.dataset.numbered === "true") return;
 
@@ -234,7 +514,6 @@ function autoNumberCallouts() {
       title.querySelectorAll(".bookmark-btn").forEach((button) => button.remove());
       stripCalloutType(title, type);
 
-      const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
       const typeSpan = document.createElement("span");
       typeSpan.className = "callout-type";
       typeSpan.textContent = typeLabel;
@@ -256,6 +535,233 @@ function autoNumberCallouts() {
       label.dataset.numbered = "true";
     });
   });
+}
+
+function explicitEquationTag(wrapper) {
+  return equationNumbering?.manualEquationTag(wrapper.textContent)?.value || "";
+}
+
+function equationMarkerAnchors(wrapper) {
+  const ownMarker = referenceKind(wrapper.id) === "eq" ? [wrapper] : [];
+  const preceding = precedingMarkerAnchors(wrapper)
+    .filter((anchor) => referenceKind(anchor.id) === "eq");
+  return [...ownMarker, ...preceding];
+}
+
+function autoNumberEquations() {
+  byId("content").querySelectorAll(".note-section").forEach((section) => {
+    const sectionNumber = section.dataset.sec || "0";
+    let counter = 0;
+    let alignIndex = 0;
+
+    section.querySelectorAll(".display-math").forEach((wrapper) => {
+      const aligned = equationNumbering?.numberAlignedMath(wrapper.textContent, {
+        sectionNumber: Number.parseInt(sectionNumber, 10),
+        startCounter: counter,
+        labelPrefix: `course-notes-row-${sectionNumber}-${++alignIndex}`
+      });
+      if (aligned) {
+        counter = aligned.counter;
+        wrapper.classList.add("aligned-equations");
+        wrapper.textContent = aligned.tex;
+        if (aligned.rows.length) {
+          wrapper.courseNotesAlignedRows = aligned.rows.map((row) => {
+            const aliases = row.ids.map((id) => {
+              const alias = document.createElement("span");
+              alias.id = id;
+              alias.className = "reference-marker equation-row-marker tex2jax_ignore";
+              alias.setAttribute("aria-hidden", "true");
+              annotateReferenceTarget(alias, "Equation", row.number, wrapper);
+              wrapper.before(alias);
+              return alias;
+            });
+            return { ...row, aliases };
+          });
+          return;
+        }
+      }
+
+      const markers = equationMarkerAnchors(wrapper);
+      if (!markers.length) return;
+
+      counter += 1;
+      const automaticNumber = `${sectionNumber}.${counter}`;
+      const manualTag = explicitEquationTag(wrapper);
+      const referenceNumber = manualTag || automaticNumber;
+      annotateReferenceTarget(wrapper, "Equation", referenceNumber);
+      markers.forEach((marker) => {
+        annotateReferenceTarget(marker, "Equation", referenceNumber, wrapper);
+      });
+
+      wrapper.classList.add("numbered-equation");
+      if (manualTag) return;
+
+      const number = document.createElement("span");
+      number.className = "equation-number tex2jax_ignore";
+      number.setAttribute("aria-label", `Equation ${automaticNumber}`);
+      number.textContent = `(${automaticNumber})`;
+      wrapper.appendChild(number);
+    });
+  });
+}
+
+function connectAlignedEquationRows() {
+  byId("content").querySelectorAll(".aligned-equations").forEach((wrapper) => {
+    const bindings = wrapper.courseNotesAlignedRows || [];
+    if (!bindings.length) return;
+
+    const table = Array.from(wrapper.querySelectorAll('g[data-mml-node="mtable"]'))
+      .find((candidate) => !candidate.parentElement?.closest('g[data-mml-node="mtable"]'));
+    const rows = table
+      ? Array.from(table.querySelectorAll('g[data-mml-node="mtr"], g[data-mml-node="mlabeledtr"]'))
+        .filter((row) => row.closest('g[data-mml-node="mtable"]') === table)
+      : [];
+
+    bindings.forEach((binding) => {
+      const generatedLabel = document.getElementById(`mjx-eqn:${binding.syntheticLabel}`);
+      const renderedRow = nearestRenderedEquationRow(rows, generatedLabel) ||
+        rows[binding.renderedRowIndex] || generatedLabel || wrapper;
+      annotateReferenceTarget(renderedRow, "Equation", binding.number);
+      binding.aliases.forEach((alias) => {
+        alias.courseNotesReferenceTarget = renderedRow;
+      });
+    });
+  });
+}
+
+function nearestRenderedEquationRow(rows, label) {
+  if (!label || !rows.length) return undefined;
+  const labelBox = label.getBoundingClientRect();
+  if (!labelBox.height) return undefined;
+  const labelMiddle = labelBox.top + labelBox.height / 2;
+
+  return rows
+    .filter((row) => row.getBoundingClientRect().height > 0)
+    .sort((left, right) => {
+      const leftBox = left.getBoundingClientRect();
+      const rightBox = right.getBoundingClientRect();
+      const leftDistance = Math.abs(leftBox.top + leftBox.height / 2 - labelMiddle);
+      const rightDistance = Math.abs(rightBox.top + rightBox.height / 2 - labelMiddle);
+      return leftDistance - rightDistance;
+    })[0];
+}
+
+function buildReferenceRegistry() {
+  const registry = new Map();
+
+  document.querySelectorAll("[id]").forEach((element) => {
+    if (!element.id) return;
+    if (!registry.has(element.id)) registry.set(element.id, []);
+    registry.get(element.id).push(element);
+  });
+
+  return registry;
+}
+
+function referenceEntry(id) {
+  const matches = referenceRegistry.get(id) || [];
+  if (matches.length !== 1) return undefined;
+
+  const element = matches[0];
+  const semanticTarget = element.courseNotesReferenceTarget || element;
+  const label = element.dataset.xrefLabel || semanticTarget.dataset.xrefLabel;
+  const number = element.dataset.xrefNumber || semanticTarget.dataset.xrefNumber;
+  return { element, semanticTarget, label, number };
+}
+
+function resolveCrossReferences() {
+  byId("content").querySelectorAll('a[href^="#"]').forEach((link) => {
+    const id = decodedFragment(link);
+    if (!id) return;
+
+    const matches = referenceRegistry.get(id) || [];
+    const entry = referenceEntry(id);
+    link.classList.add("cross-reference");
+    link.classList.remove("cross-reference-missing", "cross-reference-ambiguous");
+    link.removeAttribute("aria-invalid");
+
+    if (!matches.length) {
+      link.classList.add("cross-reference-missing");
+      link.setAttribute("aria-invalid", "true");
+      link.title = `Reference target “${id}” was not found.`;
+      console.warn(`Course notes reference target not found: ${id}`);
+      return;
+    }
+
+    if (matches.length > 1) {
+      link.classList.add("cross-reference-ambiguous");
+      link.setAttribute("aria-invalid", "true");
+      link.title = `Reference target “${id}” is used more than once.`;
+      console.warn(`Course notes reference target is duplicated: ${id}`);
+      return;
+    }
+
+    link.removeAttribute("title");
+    if (!entry?.label || !entry.number) return;
+    if (!GENERIC_REFERENCE_TEXT.has(link.textContent.trim().toLocaleLowerCase())) return;
+    link.textContent = `${entry.label} ${entry.number}`;
+    link.setAttribute("aria-label", `${entry.label} ${entry.number}`);
+  });
+}
+
+function refreshBookmarkLabels() {
+  document.querySelectorAll("#content .bookmarkable").forEach((element) => {
+    const container = element.classList.contains("callout")
+      ? element.querySelector(":scope > .label") || element
+      : element;
+    const plainText = normalizeText(container);
+    element.dataset.plain = plainText;
+    container.dataset.plain = plainText;
+  });
+}
+
+function openAncestorDetails(element) {
+  let details = element.closest("details:not([open])");
+  while (details) {
+    details.open = true;
+    details = details.parentElement?.closest("details:not([open])");
+  }
+}
+
+function scrollToReference(id, behavior = "smooth") {
+  const entry = referenceEntry(id);
+  if (!entry) return false;
+
+  const target = entry.semanticTarget || entry.element;
+  openAncestorDetails(target);
+  target.scrollIntoView({ behavior, block: "start" });
+  return true;
+}
+
+function scrollToCurrentReference() {
+  if (!window.location.hash) return;
+  let id = "";
+  try {
+    id = decodeURIComponent(window.location.hash.slice(1));
+  } catch (error) {
+    id = window.location.hash.slice(1);
+  }
+  if (id) scrollToReference(id, "auto");
+}
+
+function setupInternalLinkNavigation() {
+  byId("content").addEventListener("click", (event) => {
+    const element = event.target instanceof Element ? event.target : event.target?.parentElement;
+    const link = element?.closest?.('a[href^="#"]');
+    if (!link || !byId("content").contains(link)) return;
+
+    const id = decodedFragment(link);
+    if (!id) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (!scrollToReference(id)) return;
+
+    const url = new URL(window.location.href);
+    url.hash = id;
+    window.history.pushState(null, "", url);
+  });
+
+  window.addEventListener("hashchange", scrollToCurrentReference);
 }
 
 function safeRead(key) {
@@ -370,11 +876,34 @@ function removeBookmark(id) {
   renderBookmarks();
 }
 
+function createBookmarkIcon() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.classList.add("bookmark-icon");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", "M6 3.5h12v17l-6-4-6 4z");
+  svg.appendChild(path);
+  return svg;
+}
+
+function setBookmarkButtonState(button, isBookmarked) {
+  const action = isBookmarked ? "Remove bookmark" : "Add bookmark";
+  button.setAttribute("aria-pressed", String(isBookmarked));
+  button.setAttribute("aria-label", action);
+  button.title = action;
+}
+
 function addBookmarkButtons() {
   document.querySelectorAll("#content .bookmark-btn").forEach((button) => button.remove());
 
   const blocks = Array.from(document.querySelectorAll("#content .callout, #content p"))
-    .filter((element) => element.classList.contains("callout") || !element.closest(".callout"));
+    .filter((element) => (
+      !element.classList.contains("reference-marker") &&
+      (element.classList.contains("callout") || !element.closest(".callout"))
+    ));
 
   blocks.forEach((element) => {
     element.classList.add("bookmarkable");
@@ -390,10 +919,8 @@ function addBookmarkButtons() {
     const button = document.createElement("button");
     button.className = "bookmark-btn";
     button.type = "button";
-    button.title = "Toggle bookmark";
-    button.setAttribute("aria-label", "Toggle bookmark");
-    button.setAttribute("aria-pressed", "false");
-    button.textContent = "🔖";
+    button.appendChild(createBookmarkIcon());
+    setBookmarkButtonState(button, false);
     button.addEventListener("click", (event) => {
       event.stopPropagation();
       toggleBookmark(element.id);
@@ -449,8 +976,8 @@ function renderBookmarks() {
   document.querySelectorAll("#content .bookmarkable").forEach((element) => {
     const isBookmarked = bookmarks.includes(element.id);
     element.classList.toggle("bookmarked", isBookmarked);
-    element.querySelector(":scope > .bookmark-btn, :scope > .label > .bookmark-btn")
-      ?.setAttribute("aria-pressed", String(isBookmarked));
+    const button = element.querySelector(":scope > .bookmark-btn, :scope > .label > .bookmark-btn");
+    if (button) setBookmarkButtonState(button, isBookmarked);
   });
 
   const headings = Array.from(document.querySelectorAll("#content h1, #content h2, #content h3"));
@@ -469,6 +996,13 @@ function renderBookmarks() {
   const counters = { h1: 0, h2: 0, h3: 0 };
   const fragment = document.createDocumentFragment();
 
+  if (!bookmarks.length) {
+    const empty = document.createElement("li");
+    empty.className = "bookmark-empty";
+    empty.textContent = "No bookmarks yet.";
+    fragment.appendChild(empty);
+  }
+
   headings.forEach((heading) => {
     const item = document.createElement("li");
     item.className = `heading-item level-${heading.tagName.slice(1)}`;
@@ -478,36 +1012,39 @@ function renderBookmarks() {
     item.appendChild(title);
 
     const childBookmarks = bookmarksByHeading.get(heading) || [];
-    if (childBookmarks.length) {
-      const list = document.createElement("ul");
-      list.className = "heading-bookmark-list";
+    if (!childBookmarks.length) {
+      fragment.appendChild(item);
+      return;
+    }
 
-      childBookmarks.forEach((bookmarkedElement) => {
-        const bookmarkItem = document.createElement("li");
-        bookmarkItem.className = "bookmark-item";
+    const list = document.createElement("ul");
+    list.className = "heading-bookmark-list";
 
-        const link = document.createElement("a");
-        link.href = `#${bookmarkedElement.id}`;
-        link.textContent = bookmarkedElement.dataset.plain || normalizeText(bookmarkedElement);
-        link.addEventListener("click", (event) => {
-          event.preventDefault();
-          bookmarkedElement.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+    childBookmarks.forEach((bookmarkedElement) => {
+      const bookmarkItem = document.createElement("li");
+      bookmarkItem.className = "bookmark-item";
 
-        const removeButton = document.createElement("button");
-        removeButton.type = "button";
-        removeButton.className = "bookmark-remove";
-        removeButton.title = "Remove bookmark";
-        removeButton.setAttribute("aria-label", "Remove bookmark");
-        removeButton.textContent = "🔖";
-        removeButton.addEventListener("click", () => removeBookmark(bookmarkedElement.id));
-
-        bookmarkItem.append(link, removeButton);
-        list.appendChild(bookmarkItem);
+      const link = document.createElement("a");
+      link.href = `#${bookmarkedElement.id}`;
+      link.textContent = bookmarkedElement.dataset.plain || normalizeText(bookmarkedElement);
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        bookmarkedElement.scrollIntoView({ behavior: "smooth", block: "start" });
       });
 
-      item.appendChild(list);
-    }
+      const removeButton = document.createElement("button");
+      removeButton.type = "button";
+      removeButton.className = "bookmark-remove";
+      removeButton.title = "Remove bookmark";
+      removeButton.setAttribute("aria-label", "Remove bookmark");
+      removeButton.appendChild(createBookmarkIcon());
+      removeButton.addEventListener("click", () => removeBookmark(bookmarkedElement.id));
+
+      bookmarkItem.append(link, removeButton);
+      list.appendChild(bookmarkItem);
+    });
+
+    item.appendChild(list);
 
     fragment.appendChild(item);
   });
@@ -542,6 +1079,7 @@ function setupBookmarkPanel() {
 document.addEventListener("DOMContentLoaded", async () => {
   setupTheme();
   setupBookmarkPanel();
+  setupInternalLinkNavigation();
 
   try {
     configureMarkdown();

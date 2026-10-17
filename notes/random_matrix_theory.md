@@ -28,8 +28,8 @@ These tools happen not to be the best one for our problem, so we introduce a pow
 
 ## The Stieltjes Transform
 
-<div class="callout definition"><span class="label">Definition: Stieltjes Transformn</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout definition">
+<div class="label">Definition: Stieltjes Transformn</div>
 Let $\mu$ denote a measure on $\mathbb R$. The <strong><i>Stieltjes transform</i></strong> of $\mu$ is given by
 $$
 \mathcal S_\mu(z) = \int \frac{1}{t - z} d\mu(t)
@@ -45,8 +45,8 @@ We now introduce a few properties of the Stieltjes transform, of which we highli
 
 With these goals in mind, we proceed to formally presenting some results on the Stieltjes transform that will be useful to us later on.
 
-<div class="callout proposition"><span class="label">Proposition: Stieltjes Transform for Compactly Supported Probability Measures</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout proposition">
+<div class="label">Proposition: Stieltjes Transform for Compactly Supported Probability Measures</div>
 Let $\mu$ be a compactly supported probability measure, i.e. let there exist an $M$ such that $\mu([-M, M]) = 1$.
 
 Then for all $z \in \mathbb C \backslash \mathbb R$ where $|z| > M$, 
@@ -77,8 +77,8 @@ $$
 
 The following theorem essentially states that, given the Stieltjes transform of a measure $\mu$, we can recover $\mu$.
 
-<div class="callout theorem"><span class="label">Theorem: Stieltjes Inversion Formula</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Stieltjes Inversion Formula</div>
 Let $\mu$ be a a measure on $\mathbb R$, and let $a < b$ be two continuity points of $\mu$. Then
 $$
 \lim_{\epsilon \rightarrow 0^+} \frac{1}{\pi} \int_{a}^b \text{Im} \left(\mathcal S_\mu(x + i\epsilon)\right) d\lambda(x) = \mu((a, b)),
@@ -106,8 +106,8 @@ $$
 
 The next theorem is the most important of this set of results. It gives us equivalence in convergence of a sequence of measures and their Stieltjes transforms.
 
-<div class="callout theorem"><span class="label">Theorem: Continuity of Stieltjes Transforms</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: Continuity of Stieltjes Transforms</div>
 Let $\mu_n$ be a sequence of measures and let $\mathcal S_{\mu_n}(z)$ be their Stieltjes transforms. Then
 <ol type="i">
   <li>For $\mu_n \overset{w}\rightarrow \mu$, $\mathcal S_{\mu_n}(z) \rightarrow \mathcal S_\mu(z)$ for all $z \in \mathbb C \backslash \mathbb R$.</li>
@@ -118,8 +118,8 @@ Let $\mu_n$ be a sequence of measures and let $\mathcal S_{\mu_n}(z)$ be their S
 
 We can now use these results on the Stieltjes transform to define the weak limit of the empirical spectral distribution of our $X^\top X$ where $X$ has iid Gaussian entries.
 
-<div class="callout theorem"><span class="label">Theorem: The Marçenko-Pastur Law</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout theorem">
+<div class="label">Theorem: The Marçenko-Pastur Law</div>
 Let $X \in \mathbb R^{n \times p}$ be a random matrix where $X_{ij} \overset{iid}\sim \mathcal N(0, \frac{1}{n})$. Let $\mu_n$ denote the empirical spectral distribution of $X^\top X$, i.e. $\mu_n \triangleq \frac{1}{p} \sum_{i = 1}^p \delta_{\lambda_i}$, where $\lambda_i$ are the eigenvalues of $X^\top X$.
 
 Suppose for simplicity that $p < n$, i.e. the matrix $X^\top X$ is full rank. Then $\mu_n$ converges weakly in probability to the density

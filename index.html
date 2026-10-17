@@ -39,7 +39,8 @@
         inlineMath: [['$', '$'], ['\\(', '\\)']],
         displayMath: [['$$', '$$'], ['\\[', '\\]']],
         processEscapes: true,
-        tags: 'ams'
+        processEnvironments: true,
+        tags: 'none'
       },
       options: { ignoreHtmlClass: 'tex2jax_ignore' },
       svg: { fontCache: 'global' },
@@ -48,6 +49,9 @@
   </script>
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
 
+  <script defer src="equation-numbering.js"></script>
+
+  <script defer src="html-markdown.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>

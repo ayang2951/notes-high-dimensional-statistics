@@ -8,10 +8,10 @@ For example, one of the more popular settings, termed "proportional high dimensi
 
 Consider the following simple motivating example: suppose we have a distribution that is multimodal in truth (but this is unknown to us). At the beginning, perhaps we choose a simple Gaussian model for the distribution. As we obtain more data, we would likely modify our model, as the data are highly non-gaussian. We can even make our model more and more complex as we better understand the distribution, which means there are more parameters to learn. In this case, the dimension of the parameters $p$ would grow with $n$.
 
-Let's look at a few examples where "classical" tools may not be effective for analysis, and we'll need to look for something more tailored to high dimensional.
+Let's look at a few examples where "classical" tools may not be effective for analysis, and we'll need to look for something more tailored to high-dimensional analysis.
 
-<div class="callout example"><span class="label">Example: Principle Component Analysis</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Principle Component Analysis</div>
 Suppose we have an observation
 $$
 X = \lambda u v_*^\top + Z,
@@ -27,13 +27,13 @@ $$
 As we'll also see later, this problem has what's called a <i>phase transition</i>: at some values of an SNR the problem is possible or even easy, and very sharply, becomes impossible.
 </div>
 
-<div class="callout example"><span class="label">Example: Risk Estimation</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Risk Estimation</div>
 Take, for example, risk estimation, and specifically, parameter tuning. For example, if we have $k$-fold cross validation, biases persist even in high dimensions.
 </div>
 
-<div class="callout example"><span class="label">Example: Sparse Regression</span><br/>
-<hr style="height:0.01px; visibility:hidden;" />
+<div class="callout example">
+<div class="label">Example: Sparse Regression</div>
 Another popular example that is of continued interest is the sparse linear regression model:
 $$
 y = X \beta^* + w,
