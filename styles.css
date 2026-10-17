@@ -1,7 +1,7 @@
 :root {
   color-scheme: light;
 
-  --max-w: 1000px;
+  --max-w: 1200px;
   --side-pad: clamp(16px, 4vw, 40px);
   --flow-space: 1rem;
   --math-space: 1rem;
